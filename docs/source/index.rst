@@ -6,18 +6,14 @@
 Welcome to BEAM VM Wisdoms!
 ===========================================
 
-Contents:
+BEAM internal term and data format
 
 .. toctree::
-   :maxdepth: 2
+    :maxdepth: 2
 
-BEAM internal term and data format
-==================================
+    definitions
+    data-sizes
 
-* Definitions
-* Data sizes
-* Primary tag bits
-* Secondary tag bits
 
 Indices and tables
 ==================
