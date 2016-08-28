@@ -1,4 +1,4 @@
-BEAM internal data sizes
+BEAM Internal data sizes
 ========================
 
 Each boxed term has size described below plus one word for term value
@@ -45,6 +45,12 @@ positive and negative **bigint** (tagged separately to avoid storing sign bit),
 Tuple size: its arity plus 1 :ref:`Word <word-label>` header.
 
 Float size: always 64 bit (1 or 2 words) + 1 :ref:`Word <word-label>` header.
+
+Bigint size: ``ceil(log2^64(Number))`` Words + 1 :ref:`Word <word-label>`
+header. Thus a <=64bit will take 1 word, 65-127bit will take 2 words and so on.
+On 32-bit architectures, of course, the Word size is 32 bit and everything is
+32-bit based.
+
 
 Header
 ------

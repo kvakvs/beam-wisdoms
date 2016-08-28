@@ -57,3 +57,22 @@ Term
 CP, Continuation pointer
     A raw pointer to a location in prepared BEAM code. It is used as return
     value and can only be found on stack, never in registers or on heap.
+
+.. _scheduler-label:
+
+Scheduler
+    Scheduler is a loop which runs on a fixed CPU core and it either fetches
+    and executes next instruction based on instruction pointer in current
+    process, or takes next process in the queue. As soon as a process has been
+    running for certain number of :ref:`reductions <reduction-label>` (say 2000
+    but number may change), it is scheduled out and put to sleep, and next
+    process takes its place and continues running where it left off. This allows
+    some sort of fair scheduling where everyone is guaranteed a slice of time,
+    no matter how busy some processes are.
+
+.. _reduction-label:
+
+Reduction
+    Each instruction or a call has a cost, it uses imaginary units called
+    'reductions' where 1 reduction is approximately one function call, and the
+    rest are derived from this also approximately.

@@ -6,13 +6,16 @@
 Welcome to BEAM VM Wisdoms!
 ===========================================
 
-BEAM internal term and data format
+See below the wisdoms collected so far. Suggest more ideas in my github
+repository https://github.com/kvakvs/beam-wisdoms
 
 .. toctree::
     :maxdepth: 2
 
     definitions
     data-sizes
+    processes
+    process-heap
 
 
 Indices and tables
