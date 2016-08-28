@@ -34,7 +34,7 @@ Load balancing ELI5
 -------------------
 
 Typically one Erlang scheduler per CPU core is launched. Processes are
-assigned to them in some manner (for simplicity you can say it's random).
+assigned to them in some manner (for simplicity you can say it is random).
 How many schedulers are started is configured at VM start with ``+S`` flag, also
 see flag ``+SP``. Schedulers can be bound to cores in different manners (``+sbt``
 flag).

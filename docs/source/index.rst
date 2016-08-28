@@ -19,6 +19,11 @@ ELI5 Section (Explain me like i'm five)
     eli5-processes
     eli5-process-heap
 
+TODO
+-----
+
+ELI5 IO and ports; ELI5 Ext term format; ELI5 Traps and dirty schedulers
+
 Deeper Knowledge Section
 ------------------------
 
@@ -28,4 +33,15 @@ Deeper Knowledge Section
     definitions
     data-sizes
     memory-layout
+    heap-layout
 
+TODO
+------
+
+More details from ELI5 articles;
+IO and ports;
+Links and monitors;
+ETS?;
+BIFs, traps;
+Process: Exceptions;
+Ext term format

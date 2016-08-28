@@ -56,7 +56,7 @@ by internal emulator logic, they will be automatically garbage collected later.
 
 Header values can never be found in register or on stack. This is heap-only data structure.
 
-Tuple (ARITYVAL_SUBTAG=0)
+Tuple (ARITYVAL=0)
 `````````````````````````
 
 A tuple has header word tagged with ``TAG_PRIMARY_HEADER`` with ``ARITYVAL_SUBTAG``.
@@ -68,7 +68,7 @@ arbitrary index, and very hard to grow. Modification of tuple elements in place
 is used as optimization by Erlang compiler if it can prove, that intermediate
 tuple value will be dropped.
 
-Bignum (NEG=2/POS_BIG_SUBTAG=3)
+Bignum (NEG=2/POS_BIG=3)
 ```````````````````````````````
 
 Bignums have header word tagged with ``TAG_PRIMARY_HEADER`` followed by either
@@ -78,7 +78,7 @@ i.e. how many extra :ref:`Words <def-word>` are used by bignum bits.
 Following are bits of the bignum, a :ref:`Word <def-word>` at a time.
 Most significant word goes first.
 
-Reference (REF_SUBTAG=4)
+Reference (REF=4)
 ````````````````````````
 
 See struct ``RefThing`` in ``erl_term.h``.
@@ -90,7 +90,7 @@ have the ref value stored in them. Internal (local) ref layout is explained in
 ``erl_term.h`` search for text "Ref layout (internal references)" and
 "Ref layout on a 64-bit" (2 comments).
 
-Fun/Closure (FUN_SUBTAG=5)
+Fun/Closure (FUN=5)
 ``````````````````````````
 
 See struct ``ErlFunThing`` in ``erl_fun.h``.
@@ -101,31 +101,31 @@ This is a closure (a function pointer with frozen variable values). It contains
 pointer to function entry, arity, amount
 of frozen variables, pid of creator process and array of frozen variables.
 
-Float (FLOAT_SUBTAG=6)
+Float (FLOAT=6)
 ``````````````````````
 
 Contains header word tagged with ``TAG_PRIMARY_HEADER`` with ``FLOAT_SUBTAG``.
 Followed by 64 bit of C ``double`` IEEE-754 format.
 
-Export (EXPORT_SUBTAG=7)
+Export (EXPORT=7)
 ````````````````````````
 
-Reference-counted Binary (REFC_BINARY_SUBTAG=8)
+Reference-counted Binary (REFC_BINARY=8)
 ```````````````````````````````````````````````
 
-Heap Binary (HEAP_BINARY_SUBTAG=9)
+Heap Binary (HEAP_BINARY=9)
 ``````````````````````````````````
 
-Sub-binary (SUB_BINARY_SUBTAG=10)
+Sub-binary (SUB_BINARY=10)
 ``````````````````````````````````
 
-External Pid 12
+Ext Pid 12
 ```````````````
 
-External Port 13
+Ext Port 13
 `````````````````
 
-External Ref (EXTERNAL_REF_SUBTAG=14)
+Ext Ref (EXTERNAL_REF=14)
 ``````````````````````````````````````
 
 External ref format is explained in ``erl_term.h`` search for "External thing layout".
