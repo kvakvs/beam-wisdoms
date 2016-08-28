@@ -7,12 +7,12 @@ General overview
 ----------------
 
 A process is a C structure, which refers to heap, stack (an array of
-:ref:`Terms <term-label>` inside heap), registers (function args), instruction
+:ref:`Terms <def-term>` inside heap), registers (function args), instruction
 pointer, and some other extra fields for exception handling etc. Spawning a
 process is basically creating this structure and empty heap (array of terms)
 in dynamic memory.
 
-A newly created process is placed on a :ref:`Scheduler <scheduler-label>`.
+A newly created process is placed on a :ref:`Scheduler <def-scheduler>`.
 
 Sending a message to a process is a simple operation: Lock the process mailbox
 (if we're in SMP), copy term being sent to process' own heap, add the resulting
@@ -57,7 +57,7 @@ Process Registry ELI5
 
 A global process table maps process identifier (pid) to a Process structure.
 The reverse mapping is done via ``Process.common.id`` field which is
-an :ref:`Eterm <term-label>` field containing pid. This way a process can always
+an :ref:`Eterm <def-term>` field containing pid. This way a process can always
 be uniquely identified by its local pid. Remote pids are larger and contain node
 name and internal node id, and they will have to be resolved on the node which
 owns them.
@@ -70,8 +70,8 @@ Message Queues ELI5
 -------------------
 
 Message queue is a C structure which belongs in Process struct,
-it contains :ref:`Eterms <term-label>`
-sent to the process, while the term :ref:`boxed data <box-label>` will be located
+it contains :ref:`Eterms <def-term>`
+sent to the process, while the term :ref:`boxed data <def-box>` will be located
 in this process' heap. A pointer to position in the queue exists, and it is
 moved forward, as BEAM opcodes for reading the mailbox are executed. When pointer
 reaches end of the mailbox, it is wrapped and scanning is started over -- this is

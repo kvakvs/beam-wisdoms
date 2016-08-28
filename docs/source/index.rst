@@ -27,4 +27,5 @@ Deeper Knowledge Section
 
     definitions
     data-sizes
+    memory-layout
 

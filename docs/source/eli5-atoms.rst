@@ -14,7 +14,7 @@ manipulating atoms is cheap.
 
 During BEAM module loading atom values are read and looked up in atom table,
 atom names are replaced with their integer values, tagged as Atom
-:ref:`immediate <immediate-label>`, and henceforth atom integer value is used
+:ref:`immediate <def-immed>`, and henceforth atom integer value is used
 everywhere in the code.
 
 Externally (over network and on disk) internal values cannot be used, because

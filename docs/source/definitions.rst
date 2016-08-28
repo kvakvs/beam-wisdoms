@@ -4,73 +4,110 @@ BEAM Definitions
 For specific constant values, bit positions and bit sizes please always
 refer to original beam sources, file: ``erl_term.h``
 
-.. _primary-tag-label:
+.. _def-primary-tag:
 
 Primary tag
     When a term value is encoded, several least-significant bits (currently
-    2 bits are reserved) to represent type of contained term.
+    2 bits) are reserved to represent type of contained term.
 
-Secondary tag
-    When a box is referenced, its first :ref:`Word <word-label>` usually contains
-    few least-significant bits (currently 6) with secondary tag, and the
+    Term tag can be:
+    a :ref:`box <def-box>` (``TAG_PRIMARY_BOXED=2``),
+    a list (``TAG_PRIMARY_LIST=1``),
+    a :ref:`header <def-header>` (``TAG_PRIMARY_HEADER=0``)
+    or an :ref:`immediate <def-immed>` (``TAG_PRIMARY_IMMED1=3``).
+
+.. _def-header:
+
+Header tag
+    When a box is referenced or when a block of memory is stored in heap,
+    its first :ref:`Word <def-word>` usually has few least-significant bits
+    reserved (currently 6) with header tag (4 bits)
+    and primary tag (2 bits ``TAG_PRIMARY_HEADER=0``), and the
     remaining bits may hold some other information. Often remaining bits are
-    used is arity to define following contents size.
+    used as arity to define following contents size.
 
-.. _box-label:
+.. _def-box:
 
 Box
-    A term value, whose :ref:`primary tag <primary-tag-label>` is 2
-    (``TAG_PRIMARY_BOXED`` macro) contains a pointer to data on heap. Box values
-    are used to store larger values that will not fit into Word size minus
-    4 bits (:ref:`immediate-1 <immediate-label>`) or Word size minus 6 bits
-    (for immediate-2). Examples of box: bigint, float, fun, export, heap binary,
-    external ports and pids with host name in them).
+    A term value, whose :ref:`primary tag <def-primary-tag>` is 2
+    (``TAG_PRIMARY_BOXED`` macro) contains a pointer to data on heap.
 
-.. _immediate-label:
+    On the heap first word of the box always has header tag
+    (``TAG_PRIMARY_HEADER``) in 2 least-significant bits
+    with subtag (following 4 bits) specifying what is inside the block. Knowing
+    this allows scanning heap and interpreting found data.
+
+    Box values are used to store larger values that will not fit into
+    :ref:`Word <def-word>` size minus 4 bits (:ref:`immediate-1 <def-immed>`)
+    or :ref:`Word <def-word>` size minus 6 bits
+    (for immediate-2). Examples of box:
+    **bigint**, **float**, **fun**, **export**, heap and refcounted **binary**,
+    external **ports** and **pids** (with host name in them).
+
+.. _def-immed:
 
 Immediate
-    A term value, whose :ref:`primary tag <primary-tag-label>` is 3 is said to
+    A term value, whose :ref:`primary tag <def-primary-tag>` is 3 is said to
     contain an immediate value. 2 bits following the primary tag determine what
     the value type is (``TAG_IMMED1_*`` macros). If the immediate-1 tag is 2
     (``TAG_IMMED1_IMMED2`` macro) then 2 more bits are used to interpret the
-    value type (``TAG_IMMED2_*`` macros). Examples of immediate: small integers,
-    local pids and ports, atoms, empty list ``NIL``. An immediate value FITS
-    inside one machine word and does not reference any memory.
+    value type (``TAG_IMMED2_*`` macros).
 
-.. _word-label:
+    Examples of immediate:
+    **small** integers, local **pids** and **ports**, **atoms**,
+    empty list ``NIL``.
+    An immediate value FITS in one :ref:`Word <def-word>`
+    and does not reference any memory.
+
+.. _def-nonvalue:
+
+THE_NON_VALUE
+    Internal value used by emulator, you will never be able to see it from Erlang.
+    It marks exception or special type of return value from BIF functions, also
+    it used to mark memory during garbage collection.
+
+    Depending on whether ``DEBUG`` macro is set and HiPE is enabled,
+    ``THE_NON_VALUE`` takes value of primary float header
+    (6 least-significant bits are ``0110-00``) with remaining bits set
+    to either all 0 or all 1. Or it is all zero-bits :ref:`Word <def-word>`
+    (marking a zero arity tuple on Heap), which never can appear in a register,
+    thus marking it useful to be the special return value.
+
+.. _def-word:
 
 Word
     Machine-dependent register-sized unsigned integer. This will have width of
     32 bits on 32-bit architecture, and 64 on a 64-bit architecture.
     In BEAM source code Word can be unsigned (UWord) or signed (SWord).
 
-.. _term-label:
+.. _def-term:
 
 Term
-    A term is any value in Erlang. Internally a term is a :ref:`Word <word-label>`
+    A term is any value in Erlang. Internally a term is a :ref:`Word <def-word>`
     with few least-significant bits reserved (2 to 6 bits depending on the value)
     which define its type. Remaining bits either contain the value itself (for
-    :ref:`immediate <immediate-label>` values) or a pointer to data on heap
-    (:ref:`box <box-label>` values).
+    :ref:`immediate <def-immed>` values) or a pointer to data on heap
+    (:ref:`box <def-box>` values).
 
-.. _cp-label:
+.. _def-cp:
+
 CP, Continuation pointer
     A raw pointer to a location in prepared BEAM code. It is used as return
     value and can only be found on stack, never in registers or on heap.
 
-.. _scheduler-label:
+.. _def-scheduler:
 
 Scheduler
     Scheduler is a loop which runs on a fixed CPU core and it either fetches
     and executes next instruction based on instruction pointer in current
     process, or takes next process in the queue. As soon as a process has been
-    running for certain number of :ref:`reductions <reduction-label>` (say 2000
+    running for certain number of :ref:`reductions <def-reduction>` (say 2000
     but number may change), it is scheduled out and put to sleep, and next
     process takes its place and continues running where it left off. This allows
     some sort of fair scheduling where everyone is guaranteed a slice of time,
     no matter how busy some processes are.
 
-.. _reduction-label:
+.. _def-reduction:
 
 Reduction
     Each instruction or a call has a cost, it uses imaginary units called
