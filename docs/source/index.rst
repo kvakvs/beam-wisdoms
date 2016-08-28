@@ -9,13 +9,23 @@ Welcome to BEAM VM Wisdoms!
 See below the wisdoms collected so far. Suggest more ideas in my github
 repository https://github.com/kvakvs/beam-wisdoms
 
+ELI5 Section (Explain me like i'm five)
+---------------------------------------
+
+.. toctree::
+    :maxdepth: 2
+
+    eli5-processes
+    eli5-process-heap
+
+Deeper Knowledge Section
+------------------------
+
 .. toctree::
     :maxdepth: 2
 
     definitions
     data-sizes
-    processes
-    process-heap
 
 
 Indices and tables

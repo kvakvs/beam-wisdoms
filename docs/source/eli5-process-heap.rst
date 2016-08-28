@@ -1,5 +1,5 @@
-Process Heaps
-==============
+Process Heaps ELI5
+==================
 
 The heap is allocated inside so called carriers, these look like "zone memory"
 used by games -- big chunks of system heap pre-allocated beforehand, and inside
@@ -9,8 +9,8 @@ the thing works, but is mostly done to fight memory fragmentation: you can see
 ``erts/emulator/beam/erl_*alloc.c`` (many those files, one per strategy of
 allocation).
 
-Garbage Collection
-------------------
+Garbage Collection ELI5
+-----------------------
 
 To resize process heap or when the heap comes to its capacity threshold
 (something like 75%), a new bigger heap is allocated, and scanning generational

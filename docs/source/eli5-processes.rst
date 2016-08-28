@@ -1,5 +1,5 @@
 Processes ELI5
-===================================
+===============
 
 Very high level overview (Explain me like I'm five).
 
@@ -30,8 +30,8 @@ and process registry) or catch the exception and process it like a regular
 value. An unconditional ``kill`` signal works similarly except it cannot be
 caught from Erlang code.
 
-Load balancing
---------------
+Load balancing ELI5
+-------------------
 
 Typically one Erlang scheduler per CPU core is launched. Processes are
 assigned to them in some manner (for simplicity you can say it's random).
