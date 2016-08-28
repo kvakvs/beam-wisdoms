@@ -51,3 +51,32 @@ processes to minimize latency.
 Stealing is as easy as moving a pointer to a Process struct from one list to
 another. This of course damages cache locality a bit when a thread jumps CPU
 core, but benefit from it was considered acceptable versus the drawbacks.
+
+Process Registry ELI5
+---------------------
+
+A global process table maps process identifier (pid) to a Process structure.
+The reverse mapping is done via ``Process.common.id`` field which is
+an :ref:`Eterm <term-label>` field containing pid. This way a process can always
+be uniquely identified by its local pid. Remote pids are larger and contain node
+name and internal node id, and they will have to be resolved on the node which
+owns them.
+
+Another global table (process registry) maps names to pid. You can reach it from
+Erlang by using ``erlang:register``, ``erlang:unregister`` and ``erlang:whereis``
+function calls.
+
+Message Queues ELI5
+-------------------
+
+Message queue is a C structure which belongs in Process struct,
+it contains :ref:`Eterms <term-label>`
+sent to the process, while the term :ref:`boxed data <box-label>` will be located
+in this process' heap. A pointer to position in the queue exists, and it is
+moved forward, as BEAM opcodes for reading the mailbox are executed. When pointer
+reaches end of the mailbox, it is wrapped and scanning is started over -- this is
+why selective receive on very large mailboxes becomes gradually slower.
+
+To send a message (on C level of VM source) you find process by name (using
+registered names registry) or by pid (using global pid registry) and having
+Process struct you lock it and manipulate its message queue.
