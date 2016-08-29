@@ -1,34 +1,48 @@
 Processes ELI5
 ===============
 
-Very high level overview (Explain me like I'm five).
+This is a high level overview (explain me like I'm five).
 
-General overview
-----------------
+General overview ELI5
+---------------------
 
-A process is a C structure, which refers to heap, stack (an array of
-:ref:`Terms <def-term>` inside heap), registers (function args), instruction
-pointer, and some other extra fields for exception handling etc. Spawning a
-process is basically creating this structure and empty heap (array of terms)
-in dynamic memory.
+A process is a simple C structure, which contains
+a :ref:`heap <def-heap>`,
+a :ref:`stack <def-stack>`,
+:ref:`registers <def-registers>`,
+and an instruction pointer. Also, there are some extra fields for exception
+handling, tracing etc. A new process is this structure created with a minimal
+size heap.
 
-A newly created process is placed on a :ref:`Scheduler <def-scheduler>`.
+Every new process is assigned to a :ref:`Scheduler <def-scheduler>`.
 
-Sending a message to a process is a simple operation: Lock the process mailbox
-(if we're in SMP), copy term being sent to process' own heap, add the resulting
-term to its mailbox. Unlock. A wake up signal is sent if process is frozen in
-receive, so it gets scheduler time when possible.
-If process is waiting for a message (stuck in receive operator) it will never
-be queued for execution until a message is found. This is why millions of mostly
-idle processes are able to run on a single machine without even reaching high
-CPU% usage.
+Messages
+````````
 
-Killing a process is somehow similar to sending it an exit exception. It will
-wake up from wait, receive CPU time, discover an exception and either exit
-(free its memory, trigger all monitors and links and get out of process queue
-and process registry) or catch the exception and process it like a regular
-value. An unconditional ``kill`` signal works similarly except it cannot be
-caught from Erlang code.
+Sending a message to a process is simple — this is how VM does it:
+
+1.  Lock the process mailbox (or don't, if running on a single core).
+2.  Copy message to destination process heap.
+3.  Add the resulting term to process mailbox.
+4.  Unlock the mailbox.
+5.  If the process was sleeping in a receive, it would return back to
+    scheduling queue and wake up when possible.
+
+A process waiting for a message (in receive operator) is never queued for
+execution until a message arrives. This is why millions of idle processes can
+exist on a single machine without it breaking a sweat.
+
+Messages are stored in the heap or in a heap fragment, and are chained together
+using a single linked list.
+
+Killing and Exiting
+```````````````````
+
+Killing a process is like sending it an exit exception. The process wakes up
+from sleep, receives CPU time, and discovers an exception. Then it will either
+:ref:`terminate <def-terminate>` or catch the exception and process it like
+a regular value. An unconditional ``kill`` signal works similarly except that
+Erlang code cannot catch it.
 
 Load balancing ELI5
 -------------------

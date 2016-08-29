@@ -113,3 +113,36 @@ Reduction
     Each instruction or a call has a cost, it uses imaginary units called
     'reductions' where 1 reduction is approximately one function call, and the
     rest are derived from this also approximately.
+
+.. _def-heap:
+
+Heap
+    Dynamically allocated block of :ref:`Words <def-word>` used by a process.
+    Heap can be resized with help of either ``ERTS_REALLOC*`` macro or by
+    allocating a new fragment and moving data there using garbage collector.
+    Data is placed onto heap sequentially from its start.
+
+.. _def-stack:
+
+Stack
+    A section of young heap of a process, which is used as temporary storage and
+    return stack by a process. Stack begins at heap end and grows back until it
+    meets heap write position (heap top). At this moment heap is considered full.
+
+.. _def-registers:
+
+Registers
+    An array of :ref:`Words <def-word>` used to pass arguments in a function
+    call. When a recursive call is made, affected registers are also saved onto
+    the stack.
+
+.. _def-terminate:
+
+Terminating a Process
+    An exit or kill signal is sent to a process which works similar to an
+    exception. If process was able to catch an exit signal (``trap_exit``), then
+    nothing else happens.
+
+    Process that is going to die will free its memory, trigger all monitors
+    and links, leave the process queue and get unregistered from the process
+    registry.
