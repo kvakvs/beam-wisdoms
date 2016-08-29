@@ -26,11 +26,11 @@ Bytecodes and VM Loop ELI5
 
 During BEAM code loading, some combinations of opcodes are replaced with a
 faster opcode. This is optimisation trick called *superinstruction*.
-For each opcode, there
-is a piece of C code in ``beam_emu.c`` which has a C label. An array of C labels
-is stored at the end of the same VM loop routine and is used as the lookup table.
+For each opcode, there is a piece of C code in ``beam_emu.c`` which has a
+C label. An array of C labels is stored at the end of the same VM loop routine
+and is used as the lookup table.
 
-After loading opcodes are replaced with such label addresses, followed by
+After the loading opcodes are replaced with such label addresses, followed by
 arguments. For example, for opcode #1, an element with index 1 from labels
 array is placed in the code memory.
 
@@ -41,9 +41,9 @@ extension to C and C++ compilers. This type of VM loop is called
 
 Other types of VM loops are:
 
-*   switch dispatch VM (this one is used by BEAM VM source if the C compiler
+*   *switch dispatch* VM (this one is used by BEAM VM source if the C compiler
     refuses to support labels extension. It is also 20 to 30% slower than direct
     threading;
-*   direct call threading
+*   *direct call threading*
 *   and a few more exotic
     http://www.cs.toronto.edu/~matz/dissertation/matzDissertation-latex2html/node6.html
