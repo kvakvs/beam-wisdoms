@@ -15,6 +15,7 @@ ELI5 Section (Explain me like i'm five)
 .. toctree::
     :maxdepth: 2
 
+    eli5-vm
     eli5-atoms
     eli5-processes
     eli5-process-heap
