@@ -25,25 +25,6 @@ process to the back of the queue and select another one. This allows some sort
 of fair scheduling: every process gets CPU time no matter how busy were other
 processes in the queue.
 
-Messages
-````````
-
-Sending a message to a process is simple — this is how VM does it:
-
-1.  Lock the process mailbox (or don't, if running on a single core).
-2.  Copy message to destination process heap.
-3.  Add the resulting term to process mailbox.
-4.  Unlock the mailbox.
-5.  If the process was sleeping in a receive, it would return back to
-    scheduling queue and wake up when possible.
-
-A process waiting for a message (in receive operator) is never queued for
-execution until a message arrives. This is why millions of idle processes can
-exist on a single machine without it breaking a sweat.
-
-Messages are stored in the heap or in a heap fragment, and are chained together
-using a single linked list.
-
 Killing and Exiting
 ```````````````````
 
@@ -77,27 +58,39 @@ Process Registry ELI5
 ---------------------
 
 A global process table maps process identifier (pid) to a Process structure.
-The reverse mapping is done via ``Process.common.id`` field which is
-an :ref:`Eterm <def-term>` field containing pid. This way a process can always
-be uniquely identified by its local pid. Remote pids are larger and contain node
-name and internal node id, and they will have to be resolved on the node which
-owns them.
+To know a pid of a process, refer to its ``Process.common.id`` field. A process
+is uniquely identified by its local pid. Remote pids contain more information:
+a node name and internal node id. Remote pids have to be resolved on the node
+which owns them.
 
-Another global table (process registry) maps names to pid. You can reach it from
-Erlang by using ``erlang:register``, ``erlang:unregister`` and ``erlang:whereis``
-function calls.
+Another global table (process registry) maps names to pid. You can reach it
+from Erlang by using ``erlang:register``, ``erlang:unregister`` and
+``erlang:whereis`` BIFs.
 
 Message Queues ELI5
 -------------------
 
-Message queue is a C structure which belongs in Process struct,
-it contains :ref:`Eterms <def-term>`
-sent to the process, while the term :ref:`boxed data <def-box>` will be located
-in this process' heap. A pointer to position in the queue exists, and it is
-moved forward, as BEAM opcodes for reading the mailbox are executed. When pointer
-reaches end of the mailbox, it is wrapped and scanning is started over -- this is
-why selective receive on very large mailboxes becomes gradually slower.
+Messages are stored on the heap or in heap fragments, and are chained together
+using a single linked list. Message queue is a C structure which belongs in
+Process struct and it contains :ref:`Eterms <def-term>` sent to the process.
+:ref:`Boxed data <def-box>` for larger or nested terms is located on the heap.
+A pointer to position in the queue exists, and it is advanced with BEAM
+opcodes which scan the mailbox. When scan pointer reaches the end of the
+mailbox, it is reset to the beginning and scanning starts over. This is why
+selective receive on large mailbox queues is slow.
 
-To send a message (on C level of VM source) you find process by name (using
-registered names registry) or by pid (using global pid registry) and having
-Process struct you lock it and manipulate its message queue.
+Sending a Message
+`````````````````
+
+Sending a message to a process is simple — this is how VM does it:
+
+1.  Lock the process mailbox (or don't, if running on a single core).
+2.  Copy message to destination process heap.
+3.  Add the resulting term to process mailbox.
+4.  Unlock the mailbox.
+5.  If the process was sleeping in a receive, it would return back to
+    scheduling queue and wake up when possible.
+
+A process waiting for a message (in receive operator) is never queued for
+execution until a message arrives. This is why millions of idle processes can
+exist on a single machine without it breaking a sweat.
