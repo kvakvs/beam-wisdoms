@@ -14,7 +14,16 @@ and an instruction pointer. Also, there are some extra fields for exception
 handling, tracing etc. A new process is this structure created with a minimal
 size heap.
 
+Execution
+`````````
+
 Every new process is assigned to a :ref:`Scheduler <def-scheduler>`.
+Scheduler picks one process from the queue and takes its instruction pointer.
+Then scheduler executes one instruction and loops. After certain amount of work
+done (:ref:`reductions <def-reduction>`) scheduler will place the current
+process to the back of the queue and select another one. This allows some sort
+of fair scheduling: every process gets CPU time no matter how busy were other
+processes in the queue.
 
 Messages
 ````````
@@ -47,24 +56,22 @@ Erlang code cannot catch it.
 Load balancing ELI5
 -------------------
 
-Typically one Erlang scheduler per CPU core is launched. Processes are
-assigned to them in some manner (for simplicity you can say it is random).
-How many schedulers are started is configured at VM start with ``+S`` flag, also
-see flag ``+SP``. Schedulers can be bound to cores in different manners (``+sbt``
-flag).
+By default BEAM VM starts one Erlang scheduler per CPU core. Processes get a
+scheduler assigned to them in some manner (for simplicity you can say it is
+random). You can configure schedulers using flags ``+S`` and ``+SP``. Schedulers
+can be bound to cores in different ways (``+sbt`` flag).
 
-During the runtime schedulers sometimes will eagerly look at other schedulers
-(namely at the previous one in scheduler array) and compare their process queue with
-the other. If the other queue is longer, the scheduler will steal one or several
-processes from the other. Described is the default behaviour. This behavior
-depends on the chosen balancing strategy and it can be configured at VM start
-with ``+S`` and ``+scl`` flags. You may prefer using up as few cores as possible
-to let other CPU cores sleep and save energy, or you may prefer equal spread of
-processes to minimize latency.
+At runtime schedulers will compare their process queue with the other (namely
+the previous one in scheduler array). If the other queue is longer, the
+scheduler will steal one or more processes from it. This is the default
+behaviour which can be changed. The balancing strategy and can be configured
+with VM flags ``+S`` and ``+scl``. You could want to use as few cores as
+possible to let other CPU cores sleep and save energy. Or you could prefer
+equal spread of processes to cut the latency.
 
-Stealing is as easy as moving a pointer to a Process struct from one list to
-another. This of course damages cache locality a bit when a thread jumps CPU
-core, but benefit from it was considered acceptable versus the drawbacks.
+Stealing is as easy as moving a pointer from one array to another. This may
+affect :ref:`cache locality <def-cache-locality>` when an active process
+jumps CPU core.
 
 Process Registry ELI5
 ---------------------

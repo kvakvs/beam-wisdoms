@@ -146,3 +146,10 @@ Terminating a Process
     Process that is going to die will free its memory, trigger all monitors
     and links, leave the process queue and get unregistered from the process
     registry.
+
+.. _def-cache-locality:
+
+Cache Locality
+    A mythical creature used to scare naughty developers. It may have either
+    huge impact on your code performance or very little. Always run
+    performance tests before you start optimizing for this.
