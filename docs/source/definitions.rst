@@ -10,15 +10,17 @@ Boxed Value
     A term value, whose :ref:`primary tag <def-primary-tag>` is
     (``TAG_PRIMARY_BOXED=2``), contains a pointer to data on heap.
 
-    On the heap first word of the box always has header tag
-    (``TAG_PRIMARY_HEADER``) in 2 least-significant bits
-    with subtag (following 4 bits) specifying what is inside the block. Knowing
-    this allows scanning heap and interpreting found data.
+    The first word of the box always has header tag (``TAG_PRIMARY_HEADER=0``)
+    in its 2 least-significant bits. Then goes the subtag (following 4 bits)
+    which determines type of the value inside the box. Knowing this allows
+    scanning heap and interpreting found data.
 
-    Box values are used to store larger values that will not fit into
+    VM uses boxes to store larger values, which do not fit into
     :ref:`Word <def-word>` size minus 4 bits (:ref:`immediate-1 <def-immed>`)
     or :ref:`Word <def-word>` size minus 6 bits
-    (for immediate-2). Examples of box:
+    (for immediate-2).
+
+    Examples of box:
     **bigint**, **float**, **fun**, **export**, heap and refcounted **binary**,
     external **ports** and **pids** (with host name in them).
 
@@ -40,24 +42,24 @@ CP, Continuation pointer
 Header tag
     When a box is referenced or when a block of memory is stored in heap,
     its first :ref:`Word <def-word>` usually has few least-significant bits
-    reserved (currently 6) with header tag (4 bits)
-    and primary tag (2 bits ``TAG_PRIMARY_HEADER=0``), and the
-    remaining bits may hold some other information. Often remaining bits are
-    used as arity to define following contents size.
+    reserved (currently 6). First goes the primary tag (2 bits of
+    ``TAG_PRIMARY_HEADER=0``). Then follows the header tag (4 bits) which
+    defines the type of contents. Remaining bits may hold other information,
+    often these bits store the arity (contents size).
 
 .. _def-immed:
 
 Immediate
-    A term value, whose :ref:`primary tag <def-primary-tag>` is 3 is said to
-    contain an immediate value. 2 bits following the primary tag determine what
-    the value type is (``TAG_IMMED1_*`` macros). If the immediate-1 tag is 2
-    (``TAG_IMMED1_IMMED2`` macro) then 2 more bits are used to interpret the
-    value type (``TAG_IMMED2_*`` macros).
+    A term value, whose :ref:`primary tag <def-primary-tag>` is
+    ``TAG_PRIMARY_IMMED1=3`` contains an immediate value. Two bits follow the
+    primary tag and determine the value type (``TAG_IMMED1_*`` macros).
+    If the immediate-1 tag equals ``TAG_IMMED1_IMMED2=2`` then two more bits
+    are used to interpret the value type (``TAG_IMMED2_*`` macros).
 
     Examples of immediate:
     **small** integers, local **pids** and **ports**, **atoms**,
     empty list ``NIL``.
-    An immediate value FITS in one :ref:`Word <def-word>`
+    An immediate value fits into one :ref:`Word <def-word>`
     and does not reference any memory.
 
 .. _def-heap:
