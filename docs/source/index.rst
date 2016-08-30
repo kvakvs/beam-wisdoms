@@ -4,7 +4,7 @@
    contain the root `toctree` directive.
 
 Welcome to BEAM VM Wisdoms!
-===========================================
+===========================
 
 See below the wisdoms collected so far. Suggest more ideas in my github
 repository https://github.com/kvakvs/beam-wisdoms
@@ -21,7 +21,7 @@ ELI5 Section (Explain me like i'm five)
     eli5-process-heap
 
 TODO
------
+----
 
 ELI5 IO and ports; ELI5 Ext term format; ELI5 Traps and dirty schedulers
 
@@ -37,7 +37,7 @@ Deeper Knowledge Section
     heap-layout
 
 TODO
-------
+----
 
 More details from ELI5 articles;
 IO and ports;

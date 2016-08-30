@@ -1,5 +1,5 @@
 Atoms ELI5
-===========
+==========
 
 Atom table is a global table which maps internal atom id (an integer) to a string,
 and the opposite (string can be searched and internal id is retrieved. Atom

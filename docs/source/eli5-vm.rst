@@ -22,7 +22,7 @@ compiler.
 
 
 Bytecodes and VM Loop ELI5
----------------------------
+--------------------------
 
 During BEAM code loading, some combinations of opcodes are replaced with a
 faster opcode. This is optimisation trick called *superinstruction*.
