@@ -94,3 +94,15 @@ Sending a message to a process is simple — this is how VM does it:
 A process waiting for a message (in receive operator) is never queued for
 execution until a message arrives. This is why millions of idle processes can
 exist on a single machine without it breaking a sweat.
+
+Traps
+-----
+
+Traps are a feature of the VM loop which allow to interrupt long running BIFs
+temporarily. State is saved in temporary memory block and control returns to
+the scheduler. Process sets its instruction pointer to the special trap
+instruction and the BIF returns.
+
+During the trap the current process is placed to the back of the process queue
+which allows other processes to run. When the time comes again, the VM loop
+encounters the trap instruction and jumps back to the long running BIF.

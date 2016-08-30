@@ -23,7 +23,7 @@ ELI5 Section (Explain me like i'm five)
 TODO
 -----
 
-ELI5 IO and ports; ELI5 Ext term format; ELI5 Traps and dirty schedulers
+ELI5 IO and ports; ELI5 Ext term format; ELI5 dirty schedulers
 
 Deeper Knowledge Section
 ------------------------
