@@ -1,26 +1,25 @@
 Atoms ELI5
 ==========
 
-Atom table is a global table which maps internal atom id (an integer) to a string,
-and the opposite (string can be searched and internal id is retrieved. Atom
-table has a hard limit (``+t`` flag for ``erl``, default is 1'048'576), if it
-is ever reached, the node will crash -- this is why creating atoms dynamically
-is a risky idea.
+Atom table is a global table which maps internal atom value (an integer) to a
+string. There is also the opposite lookup table, which maps a string to an
+internal value. Atom table has a hard size limit: 1048576. If it is ever
+reached, the node will crash --- this is why creating atoms in runtime is a
+risky idea. Atom table size is set with ``+t`` flag for ``erl``.
 
-Atom is a symbol which cannot be changed. When a new atom is added to atom table,
-a new unique id is assigned to it which becomes atom's hidden value on this node.
-Internally atoms are just integer values which refer to atom table, this is why
-manipulating atoms is cheap.
+Atom is a symbol which does not change its value in runtime. When a new atom
+is created, it gets a unique value for this node used as its value.
+Internally atoms are just integer values referring to atom table. This is why
+atoms operations are cheap.
 
-During BEAM module loading atom values are read and looked up in atom table,
-atom names are replaced with their integer values, tagged as Atom
-:ref:`immediate <def-immed>`, and henceforth atom integer value is used
-everywhere in the code.
+BEAM loader routine reads atom values and looks them up in atom table. It
+replaces atom names with their integer values, tagged as Atom
+:ref:`immediate <def-immed>`. Henceforth the code manipulates immediate integer
+values instead of names.
 
-Externally (over network and on disk) internal values cannot be used, because
-another node may have different order of atoms creation and they will gain
-different numeric ids, thus externally atoms are always stored as a string.
-This affects BEAM compiled file data, external pids, external ports, atoms in
-Mnesia/DETS and so on. This is the reason why sometimes developers prefer very
-short atom names for Mnesia record values and field names -- they will appear
-as strings in database data.
+These internal values cannot leave the node (over the network or on disk) as
+integers. This is because another node will have different numeric values
+for atoms. Thus when leaving the node atoms are always converted to strings.
+This affects BEAM files, external pids, external ports, atoms in Mnesia/DETS
+and so on. This is the reason why sometimes developers prefer short atom names
+for database field names — they will appear as strings in database data.

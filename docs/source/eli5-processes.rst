@@ -1,82 +1,96 @@
 Processes ELI5
 ===============
 
-Very high level overview (Explain me like I'm five).
+This is a high level overview (explain me like I'm five).
 
-General overview
-----------------
+General overview ELI5
+---------------------
 
-A process is a C structure, which refers to heap, stack (an array of
-:ref:`Terms <def-term>` inside heap), registers (function args), instruction
-pointer, and some other extra fields for exception handling etc. Spawning a
-process is basically creating this structure and empty heap (array of terms)
-in dynamic memory.
+A process is a simple C structure, which contains
+a :ref:`heap <def-heap>`,
+a :ref:`stack <def-stack>`,
+:ref:`registers <def-registers>`,
+and an instruction pointer. Also, there are some extra fields for exception
+handling, tracing etc. A new process is this structure created with a minimal
+size heap.
 
-A newly created process is placed on a :ref:`Scheduler <def-scheduler>`.
+Execution
+`````````
 
-Sending a message to a process is a simple operation: Lock the process mailbox
-(if we're in SMP), copy term being sent to process' own heap, add the resulting
-term to its mailbox. Unlock. A wake up signal is sent if process is frozen in
-receive, so it gets scheduler time when possible.
-If process is waiting for a message (stuck in receive operator) it will never
-be queued for execution until a message is found. This is why millions of mostly
-idle processes are able to run on a single machine without even reaching high
-CPU% usage.
+Every new process is assigned to a :ref:`Scheduler <def-scheduler>`.
+Scheduler picks one process from the queue and takes its instruction pointer.
+Then scheduler executes one instruction and loops. After certain amount of work
+done (:ref:`reductions <def-reduction>`) scheduler will place the current
+process to the back of the queue and select another one. This allows some sort
+of fair scheduling: every process gets CPU time no matter how busy were other
+processes in the queue.
 
-Killing a process is somehow similar to sending it an exit exception. It will
-wake up from wait, receive CPU time, discover an exception and either exit
-(free its memory, trigger all monitors and links and get out of process queue
-and process registry) or catch the exception and process it like a regular
-value. An unconditional ``kill`` signal works similarly except it cannot be
-caught from Erlang code.
+Killing and Exiting
+```````````````````
+
+Killing a process is like sending it an exit exception. The process wakes up
+from sleep, receives CPU time, and discovers an exception. Then it will either
+:ref:`terminate <def-terminate>` or catch the exception and process it like
+a regular value. An unconditional ``kill`` signal works similarly except that
+Erlang code cannot catch it.
 
 Load balancing ELI5
 -------------------
 
-Typically one Erlang scheduler per CPU core is launched. Processes are
-assigned to them in some manner (for simplicity you can say it is random).
-How many schedulers are started is configured at VM start with ``+S`` flag, also
-see flag ``+SP``. Schedulers can be bound to cores in different manners (``+sbt``
-flag).
+By default BEAM VM starts one Erlang scheduler per CPU core. Processes get a
+scheduler assigned to them in some manner (for simplicity you can say it is
+random). You can configure schedulers using flags ``+S`` and ``+SP``. Schedulers
+can be bound to cores in different ways (``+sbt`` flag).
 
-During the runtime schedulers sometimes will eagerly look at other schedulers
-(namely at the previous one in scheduler array) and compare their process queue with
-the other. If the other queue is longer, the scheduler will steal one or several
-processes from the other. Described is the default behaviour. This behavior
-depends on the chosen balancing strategy and it can be configured at VM start
-with ``+S`` and ``+scl`` flags. You may prefer using up as few cores as possible
-to let other CPU cores sleep and save energy, or you may prefer equal spread of
-processes to minimize latency.
+At runtime schedulers will compare their process queue with the other (namely
+the previous one in scheduler array). If the other queue is longer, the
+scheduler will steal one or more processes from it. This is the default
+behaviour which can be changed. The balancing strategy and can be configured
+with VM flags ``+S`` and ``+scl``. You could want to use as few cores as
+possible to let other CPU cores sleep and save energy. Or you could prefer
+equal spread of processes to cut the latency.
 
-Stealing is as easy as moving a pointer to a Process struct from one list to
-another. This of course damages cache locality a bit when a thread jumps CPU
-core, but benefit from it was considered acceptable versus the drawbacks.
+Stealing is as easy as moving a pointer from one array to another. This may
+affect :ref:`cache locality <def-cache-locality>` when an active process
+jumps CPU core.
 
 Process Registry ELI5
 ---------------------
 
 A global process table maps process identifier (pid) to a Process structure.
-The reverse mapping is done via ``Process.common.id`` field which is
-an :ref:`Eterm <def-term>` field containing pid. This way a process can always
-be uniquely identified by its local pid. Remote pids are larger and contain node
-name and internal node id, and they will have to be resolved on the node which
-owns them.
+To know a pid of a process, refer to its ``Process.common.id`` field. A process
+is uniquely identified by its local pid. Remote pids contain more information:
+a node name and internal node id. Remote pids have to be resolved on the node
+which owns them.
 
-Another global table (process registry) maps names to pid. You can reach it from
-Erlang by using ``erlang:register``, ``erlang:unregister`` and ``erlang:whereis``
-function calls.
+Another global table (process registry) maps names to pid. You can reach it
+from Erlang by using ``erlang:register``, ``erlang:unregister`` and
+``erlang:whereis`` BIFs.
 
 Message Queues ELI5
 -------------------
 
-Message queue is a C structure which belongs in Process struct,
-it contains :ref:`Eterms <def-term>`
-sent to the process, while the term :ref:`boxed data <def-box>` will be located
-in this process' heap. A pointer to position in the queue exists, and it is
-moved forward, as BEAM opcodes for reading the mailbox are executed. When pointer
-reaches end of the mailbox, it is wrapped and scanning is started over -- this is
-why selective receive on very large mailboxes becomes gradually slower.
+Messages are stored on the heap or in heap fragments, and are chained together
+using a single linked list. Message queue is a C structure which belongs in
+Process struct and it contains :ref:`Eterms <def-term>` sent to the process.
+:ref:`Boxed data <def-box>` for larger or nested terms is located on the heap.
+A pointer to position in the queue exists, and it is advanced with BEAM
+opcodes which scan the mailbox. When scan pointer reaches the end of the
+mailbox, it is reset to the beginning and scanning starts over. This is why
+selective receive on large mailbox queues is slow.
 
-To send a message (on C level of VM source) you find process by name (using
-registered names registry) or by pid (using global pid registry) and having
-Process struct you lock it and manipulate its message queue.
+Sending a Message
+`````````````````
+
+Sending a message to a process is simple — this is how VM does it:
+
+1.  Lock the process mailbox (or don't, if running on a single core).
+2.  Copy message to destination process heap.
+3.  Add the resulting term to process mailbox.
+4.  Unlock the mailbox.
+5.  If the process was sleeping in a receive, it would return back to
+    scheduling queue and wake up when possible.
+
+A process waiting for a message (in receive operator) is never queued for
+execution until a message arrives. This is why millions of idle processes can
+exist on a single machine without it breaking a sweat.
