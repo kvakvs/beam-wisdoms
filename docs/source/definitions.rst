@@ -70,6 +70,18 @@ Heap
     allocating a new fragment and moving data there using garbage collector.
     Data is placed onto heap sequentially from its start.
 
+.. _def-port:
+
+Port
+    A special value which you receive when you call ``erlang:open_port``.
+    It is hooked to a port driver (built-in or custom). You can send it commands
+    and receive messages from it, you can close it, link to it and monitor it
+    (monitoring added in v.19).
+
+    A port driver manages some resource, such as a file, a socket, a ZIP
+    archive etc. Ports provide your process with a stream of events from
+    some resource, and you can write commands and data to them as well.
+
 .. _def-primary-tag:
 
 Primary tag

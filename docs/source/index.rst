@@ -19,6 +19,7 @@ ELI5 Section (Explain me like i'm five)
     eli5-atoms
     eli5-processes
     eli5-process-heap
+    eli5-io
 
 TODO
 ----
