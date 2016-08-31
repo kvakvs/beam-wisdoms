@@ -37,6 +37,7 @@ Deeper Knowledge Section
     data-sizes
     memory-layout
     heap-layout
+    interfacing
 
 TODO
 ----

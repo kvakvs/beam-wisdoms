@@ -44,18 +44,6 @@ of NIF functions written by users and available in various Github projects.
 
 .. _NIF tutorial: http://erlang.org/doc/tutorial/nif.html
 
-There are plenty of different approaches on integrating NIFs written in other
-languages: Rust: `Rustler`_, `erlang-rust-nif`_. There are older libraries for
-C++: EPI, C: edtk, dryverl, Lua: erlua, erlualib and Python: py_interface.
-
-.. _Rustler: https://github.com/hansihe/Rustler
-.. _erlang-rust-nif: https://github.com/erszcz/erlang-rust-nif
-
 Still even if it is simplified, one must be careful! A badly written NIF is
 able to tip over the whole virtual machine or hog the resources and slow the
 execution to a grind.
-
-For the situations when you need the speed, but can tolerate call latency over
-a network connection: see how to implement own port, or `Erlport`_.
-
-.. _Erlport: http://erlport.org/
