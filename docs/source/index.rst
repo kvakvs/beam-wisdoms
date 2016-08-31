@@ -20,6 +20,7 @@ ELI5 Section (Explain me like i'm five)
     eli5-processes
     eli5-process-heap
     eli5-io
+    eli5-bif-nif
 
 TODO
 ----
