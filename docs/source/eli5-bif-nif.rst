@@ -47,3 +47,6 @@ of NIF functions written by users and available in various Github projects.
 Still even if it is simplified, one must be careful! A badly written NIF is
 able to tip over the whole virtual machine or hog the resources and slow the
 execution to a grind.
+
+See :doc:`interfacing` for a list of NIF, interoperability libraries, and port
+drivers for different programming languages.

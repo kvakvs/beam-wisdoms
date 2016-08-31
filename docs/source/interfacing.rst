@@ -34,7 +34,8 @@ Python
 ``````
 
 *   `erlang_py <https://github.com/okeuday/erlang_py/>`_ (license BSD)
-*   `py_interface <http://www.lysator.liu.se/~tab/erlang/py_interface/>`_,
+*   py_interface
+    `Website <http://www.lysator.liu.se/~tab/erlang/py_interface/>`_,
     `Github <git://github.com/tomas-abrahamsson/py_interface.git>`_
     (license GPL)
 
@@ -52,8 +53,8 @@ latency over, but don't want to risk crashing your node: choose interaction over
 network or a port.
 
 *   `Erlport <http://erlport.org/>`_
-*   `C/C++, Erlang/Elixir, Java, JavaScript/node.js, Perl, PHP, Python and Ruby <http://cloudi.org/>`_
-*   `Erlang Term Format (Ruby) <https://github.com/okeuday/erlang_rb>`_ (BSD)
-*   `Erlang Term Format (Javascript) <https://github.com/okeuday/erlang_js>`_ (BSD)
-*   `Erlang Term Format (Perl) <https://github.com/okeuday/erlang_pl>`_ (BSD)
-*   `Erlang Term Format (PHP) <https://github.com/okeuday/erlang_php>`_ (BSD)
+*   C/C++, Erlang/Elixir, Java, JavaScript/node.js, Perl, PHP, Python and Ruby <http://cloudi.org/>`_
+*   Erlang Term Format (Ruby) https://github.com/okeuday/erlang_rb (BSD)
+*   Erlang Term Format (Javascript) https://github.com/okeuday/erlang_js (BSD)
+*   Erlang Term Format (Perl) https://github.com/okeuday/erlang_pl (BSD)
+*   Erlang Term Format (PHP) https://github.com/okeuday/erlang_php (BSD)
