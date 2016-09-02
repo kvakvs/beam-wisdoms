@@ -25,7 +25,10 @@ ELI5 Section (Explain me like i'm five)
 TODO
 ----
 
-ELI5 IO and ports; ELI5 Ext term format; ELI5 dirty schedulers
+ELI5 scheduling (extend);
+ELI5 IO (extend);
+ELI5 Ext term format;
+ELI5 dirty schedulers
 
 Deeper Knowledge Section
 ------------------------

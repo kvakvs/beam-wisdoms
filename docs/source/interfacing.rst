@@ -14,6 +14,7 @@ C
 *   `dryverl <http://dryverl.ow2.org/>`_ (license BSD)
 *   `C/C++ Generic Erlang Port Driver <https://github.com/okeuday/erlang_py/>`_
     (license BSD)
+*   `Nifty, a NIF wrapper generator <http://parapluu.github.io/nifty/>`_
 
 C++
 ````
