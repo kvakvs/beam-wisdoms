@@ -108,6 +108,15 @@ Registers
     call. When a recursive call is made, affected registers are also saved onto
     the stack.
 
+.. _def-roots:
+
+Roots
+    During garbage collection, the roots are all known to be live values, found
+    on the stack and in the registers. Anything that can be traced by following
+    references in roots is considered to be reachable data. This data is moved
+    to the new heap. Previous heap is discarded, because no data can be
+    reached on it anymore.
+
 .. _def-scheduler:
 
 Scheduler

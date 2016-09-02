@@ -28,16 +28,25 @@ Garbage Collection ELI5
 -----------------------
 
 When a heap comes to its capacity threshold (something like 75%), the process
-triggers garbage collection. A new bigger heap may be allocated. Scanning
-generational garbage collection algorithm runs on the heap. The algorithm
-takes “roots” — all known to be live values on stack and in registers, and
-moves them to a new heap. Then it scans the remaining parts of source heap
+triggers garbage collection. A new bigger heap may be allocated.
+Scanning generational garbage collection algorithm runs on the heap.
+The algorithm takes the “:ref:`roots <def-roots>`” and moves them to the
+new heap.
+Then it scans the remaining parts of source heap
 and extracts more values, referred by the roots. After the scanning, source
 heap contains only dead values and algorithm drops it.
 
+"Scanning" means, that garbage collector follows the data
+:ref:`roots <def-roots>` from the start to the end, parsing everything it meets.
+"Generational" means, that algorithm splits data into young and old generation,
+assuming that data often dies young, and old data is less likely to be freed.
+Also the algorithm remembers the old position (``mature``), where the previous
+scanning has finished.
+Any data below it is guaranteed to have not updated since the last scan.
+This trick reduces amount of scanning and speeds up the algorithm.
+
 In reality the picture is a bit more complicated. There can be one or two
-heaps with different placement logic applied to them. Also there is mature
-mark for values which survived previous GC.
+heaps with different placement logic applied to them.
 
 Having garbage collector run per process heap allows Erlang to keep
 collection latency low. Also it doesn’t pause or affect other processes on
