@@ -124,8 +124,16 @@ Scheduler
 
 Stack
     A section of young heap of a process, which is used as temporary storage and
-    return stack by a process. Stack begins at heap end and grows back until it
-    meets heap write position (heap top). At this moment heap is considered full.
+    return stack by a process. A new process creates a stack which has zero size
+    and begins at the ``heap_end``.
+    Stack grows back (decrementing memory address) until it meets
+    heap write position (``heap_top``). Then heap is considered full
+    and garbage collection will trigger.
+
+    Functions can create a stack frame by pushing a :ref:`CP <def-cp>` value
+    and reserving several extra words on stack. Sometimes, when code throws an
+    exception, VM scans the stack to build a stacktrace and uses these CP values
+    as markers.
 
 .. _def-term:
 

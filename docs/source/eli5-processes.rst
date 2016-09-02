@@ -72,7 +72,7 @@ Message Queues ELI5
 
 Messages are stored on the heap or in heap fragments, and are chained together
 using a single linked list. Message queue is a C structure which belongs in
-Process struct and it contains :ref:`Eterms <def-term>` sent to the process.
+Process struct and it contains :ref:`Terms <def-term>` sent to the process.
 :ref:`Boxed data <def-box>` for larger or nested terms is located on the heap.
 A pointer to position in the queue exists, and it is advanced with BEAM
 opcodes which scan the mailbox. When scan pointer reaches the end of the
