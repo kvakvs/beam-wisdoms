@@ -42,6 +42,8 @@ Deeper Knowledge Section
     memory-layout
     heap-layout
     interfacing
+    beam-file
+    beam-code-format
 
 TODO
 ----
