@@ -4,8 +4,8 @@ BEAM VM ELI5
 BEAM got its name from Bogdan/Björn Erlang Abstract machine. This is register
 VM, but it also has a stack.
 
-Registers ELI5
---------------
+Registers and Calls
+-------------------
 
 Being a register VM means that stack is not used to pass arguments
 between calls, but registers are. They are not same registers as one would
@@ -20,15 +20,42 @@ them. In this situation, we will need to save old values on the stack. There
 is no dynamic stack allocation other than stack frame, determined by the
 compiler.
 
+Stack
+-----
 
-Bytecodes and VM Loop ELI5
---------------------------
+:ref:`Stack <def-stack>` is an array of memory on the young heap used as return
+stack and temporary storage for variables. Stack begins at the end of the heap
+and grows back (downwards).
+The data on stack is grouped into :ref:`Stack Frames <def-stack-frame>`.
+
+When a function needs some temporary memory, it allocates several words on the
+stack and marks the 0-th word with special CP value. Later it can be used
+as return address and to find out where next stack frame begins. This temporary
+memory is also used to preserve registers during recursive calls (thus growing
+the stack).
+
+Tail-recursive calls avoid keeping this temporary data or free it before
+recursing. They pass arguments in a smarter way that does not require saving
+them on stack and does not grow it.
+
+Instructions
+------------
+
+BEAM instruction set contains approximately 158 basic instructions, most of them
+can be visible if you dump assembly by calling ``erlc -S yourfile.erl``. Each
+instruction has 0 or more arguments. Different tricks are used to encode
+arguments in a portable and compact way. For example locations in code (so called
+labels) are encoded by their index, and code loader later translates them to
+memory addresses.
 
 During BEAM code loading, some combinations of opcodes are replaced with a
 faster opcode. This is optimisation trick called *superinstruction*.
 For each opcode, there is a piece of C code in ``beam_emu.c`` which has a
 C label. An array of C labels is stored at the end of the same VM loop routine
 and is used as the lookup table.
+
+Threaded VM Loop
+----------------
 
 After the loading opcodes are replaced with such label addresses, followed by
 arguments. For example, for opcode #1, an element with index 1 from labels

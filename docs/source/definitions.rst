@@ -139,10 +139,20 @@ Stack
     heap write position (``heap_top``). Then heap is considered full
     and garbage collection will trigger.
 
+    Data on stack is grouped into :ref:`Stack Frames <def-stack-frame>`.
+
+.. _def-stack-frame:
+
+Stack Frame
     Functions can create a stack frame by pushing a :ref:`CP <def-cp>` value
     and reserving several extra words on stack. Sometimes, when code throws an
     exception, VM scans the stack to build a stacktrace and uses these CP values
     as markers.
+
+    Each frame corresponds to a function call. A frame always begins with a
+    CP value which marks a return address can be used to find a frame boundary.
+    Rest of the frame is used to store any temporary variables and register
+    values between the calls.
 
 .. _def-term:
 
