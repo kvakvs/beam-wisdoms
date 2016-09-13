@@ -169,9 +169,9 @@ Parse small integer routine (used to read SmallInt values later)
     *  Bit #3 = 1: Look into bit #4:
 
         *     Bit #4 = 1: Use remaining 3 bits of the byte as byte length
-                (if under 7 - read N+2 signed words, if 7 - then length is
-                larger than that and we have to read length first -
-                INFORMATION INCOMPLETE)
+                (if under 7 - read N+2 bytes into signed words,
+                if it is 7 - then length is larger than that and we have to
+                read length first - INFORMATION INCOMPLETE)
         *     Bit #4 = 0: use remaining 3 bits + 8 more bits of the following byte
 
     *  Bit #3 = 0: Use remaining 4 bits
