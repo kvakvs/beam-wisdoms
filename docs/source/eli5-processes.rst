@@ -3,8 +3,8 @@ Processes ELI5
 
 This is a high level overview (explain me like I'm five).
 
-General overview ELI5
----------------------
+General overview
+----------------
 
 A process is a simple C structure, which contains
 a :ref:`heap <def-heap>`,
@@ -34,13 +34,19 @@ from sleep, receives CPU time, and discovers an exception. Then it will either
 a regular value. An unconditional ``kill`` signal works similarly except that
 Erlang code cannot catch it.
 
-Load balancing ELI5
--------------------
+Scheduling and Load balancing
+-----------------------------
 
 By default BEAM VM starts one Erlang scheduler per CPU core. Processes get a
 scheduler assigned to them in some manner (for simplicity you can say it is
 random). You can configure schedulers using flags ``+S`` and ``+SP``. Schedulers
 can be bound to cores in different ways (``+sbt`` flag).
+
+There are 3 process priorities: low, normal, high and max.
+Process at max always runs first making everything else wait.
+High runs approximately 8 times much often than normal (the number
+is implementation dependent).
+Low runs when there is no other work to do.
 
 At runtime schedulers will compare their process queue with the other (namely
 the previous one in scheduler array). If the other queue is longer, the
@@ -54,8 +60,8 @@ Stealing is as easy as moving a pointer from one array to another. This may
 affect :ref:`cache locality <def-cache-locality>` when an active process
 jumps CPU core.
 
-Process Registry ELI5
----------------------
+Process Registry
+----------------
 
 A global process table maps process identifier (pid) to a Process structure.
 To know a pid of a process, refer to its ``Process.common.id`` field. A process
@@ -67,8 +73,8 @@ Another global table (process registry) maps names to pid. You can reach it
 from Erlang by using ``erlang:register``, ``erlang:unregister`` and
 ``erlang:whereis`` BIFs.
 
-Message Queues ELI5
--------------------
+Message Queues
+--------------
 
 Messages are stored on the heap or in heap fragments, and are chained together
 using a single linked list. Message queue is a C structure which belongs in
