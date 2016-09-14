@@ -43,7 +43,7 @@ Deeper Knowledge Section
     heap-layout
     interfacing
     beam-file
-    beam-code-format
+    beam-instructions
 
 TODO
 ----

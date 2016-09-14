@@ -22,7 +22,7 @@ Repeat until end of file:
 *   To find next chunk, pad the length to the multiple of ALIGN=4
     ``file_pos += ALIGN * ((chunk_length + ALIGN - 1) / ALIGN);``
 
-"Atom" - The atoms table
+"Atom" - The Atoms Table
 ````````````````````````
 
 *   Read U32/big atoms count.
@@ -30,14 +30,14 @@ Repeat until end of file:
 
 Atoms[0] is a module name from ``-module(M).`` attribute.
 
-"Code" - Compiled bytecode
+"Code" - Compiled Bytecode
 ``````````````````````````
 
 *   Read U32/big code version (must match emulator's own version)
 *   Read U32/big max opcode, U32/big label count, U32/big fun count
 *   Read the code as a block. Format is discussed at :ref:`beam-code-format`.
 
-"Abst" - Abstract syntax tree
+"Abst" - Abstract Syntax Tree
 `````````````````````````````
 
 Optional section which contains ``term_to_binary`` encoded AST tree.
@@ -45,7 +45,7 @@ Optional section which contains ``term_to_binary`` encoded AST tree.
 A quick way to get ``Abst`` section (if it exists):
 ``binary_to_term( proplists:get_value( "Abst", element( 3, beam_lib:all_chunks("t.beam") ) ) ).``
 
-"CatT" - Catch table
+"CatT" - Catch Table
 ````````````````````
 
 Contains catch labels nicely lined up and marking try/catch blocks.
@@ -54,7 +54,7 @@ This section description is INCOMPLETE and UNTESTED.
 *   Read U32/big count
 *   Read array of ``count`` U32/big offsets or labels (not sure).
 
-"FunT" - Function/lambda table
+"FunT" - Function/Lambda Table
 ``````````````````````````````
 
 Contains pointers to functions in the module.
@@ -70,7 +70,7 @@ Until the ``count`` do:
     U32/big nfree (frozen values for closures),
     U32/big ouniq. Sanity check: fun_Atom_index must be in atom table range.
 
-"ExpT" - Exports table
+"ExpT" - Exports Table
 ``````````````````````
 
 Encodes exported functions and arity in the ``-export([]).`` attribute.
@@ -82,7 +82,7 @@ Until the ``count`` do:
 *   Read U32/big export name atom index. Sanity check: atom table range.
 *   Read U32/big arity, U32/big label
 
-"LitT" - Literals table
+"LitT" - Literals Table
 ```````````````````````
 
 Contains all the constants in file which are larger than 1 machine Word.
@@ -105,7 +105,7 @@ Values are encoded using the external term format.
 A better reference is in the
 `standard documentation <http://erlang.org/doc/apps/erts/erl_ext_dist.html>`_
 
-"ImpT" - Imports table
+"ImpT" - Imports Table
 ``````````````````````
 
 Encodes imported functions in the ``-import([]).`` attribute.
@@ -116,7 +116,7 @@ Until the ``count`` do:
 
 *   Read U32/big module atom index, U32/big function atom index, U32/big arity
 
-"Line" - Line numbers table
+"Line" - Line Numbers Table
 ```````````````````````````
 
 Encodes line numbers mapping to give better error reporting and code navigation
@@ -145,12 +145,14 @@ Until the ``num_filenames`` do (fill the file names table):
 
 .. _beam-term-format:
 
-BEAM term format
-----------------
+BEAM Compact Term Encoding
+--------------------------
 
 BEAM file uses a special encoding to store simple terms in BEAM file in
-an efficient way. It uses first 3 bits of a first byte as a tag
-to specify the type of the following value.
+a space-efficient way.
+It is different from memory term layout, used by BEAM VM.
+It uses first 3 bits of a first byte as a tag to specify the type of the
+following value.
 If the bits were all 1 (decimal 7), then few more bits are used.
 
 Parse the value ``tag``:
@@ -197,8 +199,8 @@ Now how to parse an encoded term:
 
 .. _beam-code-format:
 
-BEAM file Code section format
------------------------------
+BEAM Code Section Format
+------------------------
 
 Code section in BEAM file contains list of instructions and arguments.
 To read an encoded term see :ref:`BEAM Term format <beam-term-format>`.
