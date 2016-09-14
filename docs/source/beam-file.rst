@@ -4,7 +4,7 @@ BEAM File Format
 BEAM file format is binary chunked file format, which contains multiple named
 sections and has a header.
 
-*   Read 4 bytes of a .beam file are ``'FOR1'``
+*   Read 4 bytes of a .beam file: ``'FOR1'``
     (marks `IFF container <https://en.wikipedia.org/wiki/Interchange_File_Format>`_).
 *   Read U32/big length (so many more bytes must be available in the file)
 *   Read 4 bytes ``'BEAM'`` marking a BEAM file section of an IFF file.
@@ -148,7 +148,12 @@ Until the ``num_filenames`` do (fill the file names table):
 BEAM term format
 ----------------
 
-Special encoding used to store simple terms in BEAM file in an effective way.
+BEAM file uses a special encoding to store simple terms in BEAM file in
+an efficient way. It uses first 3 bits of a first byte as a tag
+to specify the type of the following value.
+If the bits were all 1 (decimal 7), then few more bits are used.
+
+Parse the value ``tag``:
 
 *   Read a byte and see its first 3 bits, what they are. This is base tag.
     Literal=0, Integer=1, Atom=2, XRegister=3, YRegister=4, Label=5,
@@ -178,16 +183,17 @@ Parse small integer routine (used to read SmallInt values later)
 
 Now how to parse an encoded term:
 
-*   Read a SmallInt
-*   Tag=Integer or Literal: use smallint value.
-*   Tag=Atom: use smallint value MINUS 1 as index in the atom table.
-    0 smallint means NIL (empty list).
-*   Tag=Label: use as label index, or 0 means invalid value.
-*   Tag=XRegister, Tag=YRegister: use as register index.
-*   Tag=Character (an Unicode symbol): use val as unsigned.
-*   Tag=Extended List: create tuple of size smallint. For smallint/2 do: parse
-    a term (``case of`` value), parse a small int (label index), place them
-    into the tuple.
+*   Read a SmallInt, case ``tag`` of:
+
+    *   Tag=Integer or Literal: use smallint value.
+    *   Tag=Atom: use smallint value MINUS 1 as index in the atom table.
+        0 smallint means NIL (empty list).
+    *   Tag=Label: use as label index, or 0 means invalid value.
+    *   Tag=XRegister, Tag=YRegister: use as register index.
+    *   Tag=Character (an Unicode symbol): use val as unsigned.
+    *   Tag=Extended List: create tuple of size smallint. For smallint/2 do: parse
+        a term (``case of`` value), parse a small int (label index), place them
+        into the tuple.
 
 .. _beam-code-format:
 
