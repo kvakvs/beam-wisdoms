@@ -205,8 +205,9 @@ BEAM Code Section Format
 Code section in BEAM file contains list of instructions and arguments.
 To read an encoded term see :ref:`BEAM Term format <beam-term-format>`.
 
-*   Read a byte, this is opcode (1..158 for R19). Opcode is converted into a
-    label address (for threaded interpreter) or handler address.
+*   Read a byte, this is opcode (R19 has 158 base opcodes).
+    Opcode is converted into a label address (for threaded interpreter) or
+    a pointer to handler function.
 *   Query opcode table and get arity for this opcode.
 *   Until ``arity``: parse term and put it into the output
 *   If any of the parsed terms was a label value, remember its output position
