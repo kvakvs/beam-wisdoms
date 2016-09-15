@@ -8,23 +8,35 @@ Immediate values
 ----------------
 
 .. image:: _static/img/memory-layout-immed.png
-    :width: 300
+    :width: 250
     :align: right
 
 Immediate types always occupy 1 :ref:`Word <def-word>`. To know if you found
-an immediate, its least-significant 2 bits will have value ``TAG_PRIMARY_IMMED1``.
+an immediate, its least-significant 2 bits will have value
+``TAG_PRIMARY_IMMED1=3``.
 
-To know what exactly immediate you've got where 2 following bits may be
-0 (``_TAG_IMMED1_PID``), 1 (``_TAG_IMMED1_PORT``), 3 (``_TAG_IMMED1_SMALL``)
-which leaves remaining :ref:`Word-size <def-word>` minus 4 bits for actual value.
+To know which exactly immediate you've got, see the two following bits
+(bit 2 and 3):
+``_TAG_IMMED1_PID=0``,
+``_TAG_IMMED1_PORT=1``,
+``_TAG_IMMED1_SMALL=3``.
+This leaves remaining :ref:`Word-size <def-word>` minus 4 bits for the
+actual value.
 
-If the bits 2,3 were equal 3 (``_TAG_IMMED1_IMMED2``) then 2 more bits are taken
-and interpreted too. They can be 0 (``_TAG_IMMED2_ATOM``), 1 (``_TAG_IMMED2_CATCH``)
-or 3 (``_TAG_IMMED2_NIL``),
-which leaves remaining :ref:`Word-size <def-word>` minus 6 bits for actual value.
-This also explains why max physical limit of atoms on 32-bit systems is
-``32-6=2^26`` (32 million). For compatibility reasons this limit also applies to
-64-bit systems.
+If the bits 2 and 3 contained ``_TAG_IMMED1_IMMED2=2`` then two more bits
+(bit 4 and 5) are taken and interpreted.
+They can be
+``_TAG_IMMED2_ATOM=0``,
+``_TAG_IMMED2_CATCH=1``
+``_TAG_IMMED2_NIL=3``,
+which leaves remaining :ref:`Word-size <def-word>` minus 6 bits for the
+actual value.
+
+This also explains why max small integer range is ``32-4=28``:
+``2^27-1`` + one bit sign, because small is an immediate-1 value.
+And why max number of atoms can be ``32-6=26`` (2^26=32 million), because
+atom is an immediate-2 value.
+For compatibility reasons this limit also applies to 64-bit systems.
 
 Lists (Cons)
 ------------
@@ -49,12 +61,20 @@ As this is also visible from Erlang, last cons cell of a list contains ``NIL``
 Boxed
 -----
 
+.. image:: _static/img/memory-layout-box.png
+    :width: 300
+    :align: right
+
 Boxed value is a pointer with 2 least-significant bits tagged with
 ``TAG_PRIMARY_BOXED=2``. Remaining bits are the pointer.
 
 A boxed pointer must always point to a :ref:`Header <def-header>`
 (see explanation of headers below). Boxed values can be found everywhere:
 in registers, on stack, on heaps.
+
+Box always points at a Header (below).
+During the garbage collection a Box can point to another Box or to
+``THE_NON_VALUE`` to mark a moved object, but never after.
 
 Headers
 -------
