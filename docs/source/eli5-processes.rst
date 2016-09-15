@@ -111,9 +111,11 @@ using a single linked list. Message queue is a C structure which belongs in
 Process struct and it contains :ref:`Terms <def-term>` sent to the process.
 :ref:`Boxed data <def-box>` for larger or nested terms is located on the heap.
 A pointer to position in the queue exists, and it is advanced with BEAM
-opcodes which scan the mailbox. When scan pointer reaches the end of the
-mailbox, it is reset to the beginning and scanning starts over. This is why
-selective receive on large mailbox queues is slow.
+opcodes which scan the mailbox.
+When scan pointer reaches the end of the mailbox, the process is put to
+receive sleep.
+The pointer is reset to the beginning of the queue only if a message was matched.
+This is why selective receive on large mailbox queues is slow.
 
 Sending a Message
 `````````````````

@@ -9,8 +9,8 @@ another array of :ref:`Terms <def-term>`. Stack is located inside the heap.
 Things on the heap are mostly arrays of :ref:`Terms <def-term>`, but tagged
 with :ref:`header tag <def-header>` (see :doc:`indepth-memory-layout`).
 
-Allocation
-----------
+Heap Carriers
+-------------
 
 Allocation in Erlang happens inside so called “carriers”. They look like
 “zone memory”, used by games — big chunks of system heap pre-allocated
@@ -24,8 +24,23 @@ strategy of allocation). Emulator has command line flags, which control
 allocation strategies (see http://erlang.org/doc/man/erts_alloc.html flags
 section).
 
-Garbage Collection ELI5
------------------------
+Allocating Inside Heap
+----------------------
+
+When a process needs some memory, its ``heap_top`` is incremented and memory
+under it is ready to use. Some activities may want to allocate on other
+process' heaps, for example sending a message will perform a copy to the
+receiving process.
+
+No bookkeeping is happening inside a process heap.
+There is no tracking which word belongs where, but it is possible to know
+what is stored in each memory cell by looking at the tag bits.
+
+Garbage Collection
+------------------
+
+Garbage collector traces known live values from registers and stack and saves
+them, then drops everything else.
 
 When a heap comes to its capacity threshold (something like 75%), the process
 triggers garbage collection. A new bigger heap may be allocated.
