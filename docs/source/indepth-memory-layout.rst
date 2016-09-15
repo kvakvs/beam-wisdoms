@@ -138,11 +138,19 @@ Followed by 64 bit of C ``double`` IEEE-754 format.
 Export (EXPORT=7)
 ````````````````````````
 
+Refers to a ``{Mod, Fun, Arity}``.
+
 Reference-counted Binary (REFC_BINARY=8)
 ```````````````````````````````````````````````
 
+A pointer to binary on the binary heap. When this is destroyed, the reference
+count is reduced (can only happen during GC).
+A binary whose refc is 0 is deleted.
+
 Heap Binary (HEAP_BINARY=9)
 ``````````````````````````````````
+
+Smaller binary (under 64 bytes) which is directly placed on the process heap.
 
 Sub-binary (SUB_BINARY=10)
 ``````````````````````````````````
@@ -150,8 +158,12 @@ Sub-binary (SUB_BINARY=10)
 Ext Pid 12
 ```````````````
 
+Pid containing node name. Refers to a process on another node.
+
 Ext Port 13
 `````````````````
+
+Port containing node name. Refers to a port on another node.
 
 Ext Ref (EXTERNAL_REF=14)
 ``````````````````````````````````````
