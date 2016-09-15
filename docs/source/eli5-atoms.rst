@@ -1,6 +1,11 @@
 Atoms ELI5
 ==========
 
+.. image:: _static/img/eli5-atom-tab.png
+    :width: 300
+    :align: right
+
+
 Atom table is a global table which maps internal atom value (an integer) to a
 string. There is also the opposite lookup table, which maps a string to an
 internal value. Atom table has a hard size limit: 1048576. If it is ever

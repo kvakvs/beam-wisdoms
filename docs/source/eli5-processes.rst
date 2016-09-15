@@ -1,7 +1,7 @@
 Processes ELI5
 ===============
 
-This is a high level overview (explain me like I'm five).
+This is a high level overview for how processes are made and how they work.
 
 General overview
 ----------------
@@ -13,6 +13,28 @@ a :ref:`stack <def-stack>`,
 and an instruction pointer. Also, there are some extra fields for exception
 handling, tracing etc. A new process is this structure created with a minimal
 size heap.
+
+Stack
+`````
+
+.. image:: _static/img/eli5-process-stack.png
+    :width: 300
+    :align: right
+
+:ref:`Stack <def-stack>` is an array of memory on the young heap used as return
+stack and temporary storage for variables. Stack begins at the end of the heap
+and grows back (downwards).
+The data on stack is grouped into :ref:`Stack Frames <def-stack-frame>`.
+
+When a function needs some temporary memory, it allocates several words on the
+stack and marks the 0-th word with special CP value. Later it can be used
+as return address and to find out where next stack frame begins. This temporary
+memory is also used to preserve registers during recursive calls (thus growing
+the stack).
+
+Tail-recursive calls avoid keeping this temporary data or free it before
+recursing. They pass arguments in a smarter way that does not require saving
+them on stack and does not grow it.
 
 Execution
 `````````
@@ -36,6 +58,10 @@ Erlang code cannot catch it.
 
 Scheduling and Load balancing
 -----------------------------
+
+.. image:: _static/img/eli5-process-sched.png
+    :width: 300
+    :align: right
 
 By default BEAM VM starts one Erlang scheduler per CPU core. Processes get a
 scheduler assigned to them in some manner (for simplicity you can say it is
@@ -75,6 +101,10 @@ from Erlang by using ``erlang:register``, ``erlang:unregister`` and
 
 Message Queues
 --------------
+
+.. image:: _static/img/eli5-process-mqueue.png
+    :width: 300
+    :align: right
 
 Messages are stored on the heap or in heap fragments, and are chained together
 using a single linked list. Message queue is a C structure which belongs in

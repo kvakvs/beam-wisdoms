@@ -56,6 +56,8 @@ http://gchandbook.org/
 Read More
 `````````
 
-:doc:`indepth-heap-layout`.
+In depth: :doc:`indepth-heap-layout`.
 
-:doc:`indepth-memory-layout`.
+In depth: :doc:`indepth-memory-layout`.
+
+`Garbage Collector in Erlang 19 <https://www.erlang-solutions.com/blog/erlang-19-0-garbage-collector.html>`_

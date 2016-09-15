@@ -9,7 +9,7 @@ Welcome to BEAM VM Wisdoms!
 See below the wisdoms collected so far. Suggest more ideas in my github
 repository https://github.com/kvakvs/beam-wisdoms
 
-ELI5 Section (Explain me like i'm five)
+ELI5 Section (Explain Me Like I'm Five)
 ---------------------------------------
 
 .. toctree::
@@ -25,7 +25,7 @@ ELI5 Section (Explain me like i'm five)
     eli5-etf
 
 TODO
-----
+````
 
 ELI5 scheduling (extend);
 ELI5 IO (extend);
@@ -47,7 +47,7 @@ Deeper Knowledge Section
     indepth-beam-instructions
 
 TODO
-----
+````
 
 More details from ELI5 articles;
 IO and ports;
