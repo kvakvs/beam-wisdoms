@@ -7,7 +7,7 @@ A heap of the process is an array of :ref:`Terms <def-term>`. A stack is
 another array of :ref:`Terms <def-term>`. Stack is located inside the heap.
 :ref:`Registers <def-registers>` --- are array of :ref:`Terms <def-term>` too!
 Things on the heap are mostly arrays of :ref:`Terms <def-term>`, but tagged
-with :ref:`header tag <def-header>` (see :doc:`memory-layout`).
+with :ref:`header tag <def-header>` (see :doc:`indepth-memory-layout`).
 
 Allocation
 ----------
@@ -56,6 +56,6 @@ http://gchandbook.org/
 Read More
 `````````
 
-:doc:`heap-layout`.
+:doc:`indepth-heap-layout`.
 
-:doc:`memory-layout`.
+:doc:`indepth-memory-layout`.

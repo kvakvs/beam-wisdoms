@@ -39,12 +39,12 @@ Deeper Knowledge Section
     :maxdepth: 2
 
     definitions
-    memory-layout
-    data-sizes
-    heap-layout
+    indepth-memory-layout
+    indepth-data-sizes
+    indepth-heap-layout
     interfacing
-    beam-file
-    beam-instructions
+    indepth-beam-file
+    indepth-beam-instructions
 
 TODO
 ----

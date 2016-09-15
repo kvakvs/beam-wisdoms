@@ -163,13 +163,13 @@ Parse the value ``tag``:
 *   If the base tag was Extended=7, the byte>>4 + 7 will become extended tag:
     Float=8, List=9, FloatReg=10, AllocList=11, Literal=12.
 
-Read signed word routine (used to read signed words later):
-`github <https://github.com/kvakvs/gluonvm/blob/master/emulator/src/beam_loader.cpp#L513-L533>`_
+`Github read signed word <https://github.com/kvakvs/gluonvm/blob/master/emulator/src/beam_loader.cpp#L513-L533>`_
+routine used to read signed words later:
 
 .. _beam-parse-smallint:
 
-Parse small integer routine (used to read SmallInt values later)
-`github <https://github.com/kvakvs/gluonvm/blob/master/emulator/src/beam_loader.cpp#L535-L555>`_:
+`Github parse small integer <https://github.com/kvakvs/gluonvm/blob/master/emulator/src/beam_loader.cpp#L535-L555>`_:
+(used to read SmallInt values later).
 
 *   Look into the first byte read, bit #3:
 

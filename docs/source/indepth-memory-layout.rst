@@ -7,6 +7,10 @@ You will never be able to see this format from Erlang code.
 Immediate values
 ----------------
 
+.. image:: _static/img/memory-layout-immed.png
+    :width: 300
+    :align: right
+
 Immediate types always occupy 1 :ref:`Word <def-word>`. To know if you found
 an immediate, its least-significant 2 bits will have value ``TAG_PRIMARY_IMMED1``.
 
@@ -24,6 +28,10 @@ This also explains why max physical limit of atoms on 32-bit systems is
 
 Lists (Cons)
 ------------
+
+.. image:: _static/img/memory-layout-list.png
+    :width: 300
+    :align: right
 
 A list term is boxed value (i.e. contains a pointer to heap). 2 least-significant
 bits of list value have ``TAG_PRIMARY_LIST=1``, remaining bits are the pointer.
