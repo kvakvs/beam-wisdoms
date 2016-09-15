@@ -52,3 +52,10 @@ Having garbage collector run per process heap allows Erlang to keep
 collection latency low. Also it doesn’t pause or affect other processes on
 other schedulers. This is not a simple topic, but theory is all here:
 http://gchandbook.org/
+
+Read More
+`````````
+
+:doc:`heap-layout`.
+
+:doc:`memory-layout`.

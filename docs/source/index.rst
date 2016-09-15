@@ -22,6 +22,7 @@ ELI5 Section (Explain me like i'm five)
     eli5-io
     eli5-bif-nif
     eli5-types
+    eli5-etf
 
 TODO
 ----
@@ -38,8 +39,8 @@ Deeper Knowledge Section
     :maxdepth: 2
 
     definitions
-    data-sizes
     memory-layout
+    data-sizes
     heap-layout
     interfacing
     beam-file

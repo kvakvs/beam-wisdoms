@@ -31,6 +31,22 @@ Cache Locality
     huge impact on your code performance or very little. Always run
     performance tests before you start optimizing for this.
 
+Context
+    Virtual machine context is a small structure which contains a copy of
+    active registers, instruction pointer, few other pointers from the
+    currently running process. It is stored in CPU registers or on stack
+    (based on C compiler judgement when building the emulator).
+
+    When a process is ready to run, its fields are copied into the context,
+    i.e. *swapped in*.
+    When a process is suspended or scheduled out, the context is stored back
+    into the process. This operation is called *swapping out*.
+    This is not a cheap operation, so VM tries to minimize context switches.
+
+    A context switch is also performed when changing from BEAM code to native
+    compiled code by HiPE or JIT. This is why mixing HiPE and normal Erlang
+    code in your program, which calls each other, is an expensive luxury.
+
 .. _def-cp:
 
 CP, Continuation pointer
@@ -128,6 +144,11 @@ Scheduler
     process takes its place and continues running where it left off. This allows
     some sort of fair scheduling where everyone is guaranteed a slice of time,
     no matter how busy some processes are.
+
+Slot
+    A special tagged value which points at a register, float register, or a
+    stack slot. It is used internally by instructions and never appears in
+    Erlang programs as data.
 
 .. _def-stack:
 
