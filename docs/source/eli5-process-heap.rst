@@ -68,11 +68,9 @@ collection latency low. Also it doesn’t pause or affect other processes on
 other schedulers. This is not a simple topic, but theory is all here:
 http://gchandbook.org/
 
-Read More
-`````````
+.. seealso::
+    In depth: :doc:`indepth-heap-layout`.
 
-In depth: :doc:`indepth-heap-layout`.
+    In depth: :doc:`indepth-memory-layout`.
 
-In depth: :doc:`indepth-memory-layout`.
-
-`Garbage Collector in Erlang 19 <https://www.erlang-solutions.com/blog/erlang-19-0-garbage-collector.html>`_
+    `Garbage Collector in Erlang 19 <https://www.erlang-solutions.com/blog/erlang-19-0-garbage-collector.html>`_

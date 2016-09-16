@@ -43,7 +43,13 @@ Atoms[0] is a module name from ``-module(M).`` attribute.
 Optional section which contains ``term_to_binary`` encoded AST tree.
 
 A quick way to get ``Abst`` section (if it exists):
-``binary_to_term( proplists:get_value( "Abst", element( 3, beam_lib:all_chunks("t.beam") ) ) ).``
+
+.. code-block:: erlang
+
+    get_abst(Filename) ->
+        Chunks = beam_lib:all_chunks(Filename),
+        Abst = proplists:get_value("Abst", element(3, Chunks)),
+        binary_to_term(Abst).
 
 "CatT" - Catch Table
 ````````````````````

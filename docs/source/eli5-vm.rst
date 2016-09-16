@@ -38,12 +38,10 @@ For each opcode, there is a piece of C code in ``beam_emu.c`` which has a
 C label. An array of C labels is stored at the end of the same VM loop routine
 and is used as the lookup table.
 
-Read More
-`````````
+.. seealso::
+    In depth: :doc:`indepth-beam-file`.
 
-In depth: :doc:`indepth-beam-file`.
-
-In depth: :doc:`indepth-beam-instructions`.
+    In depth: :doc:`indepth-beam-instructions`.
 
 Threaded VM Loop
 ----------------

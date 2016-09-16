@@ -6,7 +6,7 @@ refer to original beam sources, file: ``erl_term.h``
 
 .. _def-box:
 
-Boxed Value
+**Boxed Value**
     A term value, whose :ref:`primary tag <def-primary-tag>` is
     (``TAG_PRIMARY_BOXED=2``), contains a pointer to data on heap.
 
@@ -26,12 +26,12 @@ Boxed Value
 
 .. _def-cache-locality:
 
-Cache Locality
+**Cache Locality**
     A mythical creature used to scare naughty developers. It may have either
     huge impact on your code performance or very little. Always run
     performance tests before you start optimizing for this.
 
-Context
+**Context**
     Virtual machine context is a small structure which contains a copy of
     active registers, instruction pointer, few other pointers from the
     currently running process. It is stored in CPU registers or on stack
@@ -49,13 +49,14 @@ Context
 
 .. _def-cp:
 
-CP, Continuation pointer
-    A raw pointer to a location in prepared BEAM code. It is used as return
-    value and can only be found on stack, never in registers or on heap.
+**CP, Continuation pointer**
+    A raw pointer to a location in prepared BEAM code.
+    It is used as a return value or as a label offset.
+    CP and can only be found on the stack, never in registers or on heap.
 
 .. _def-header:
 
-Header tag
+**Header tag**
     When a box is referenced or when a block of memory is stored in heap,
     its first :ref:`Word <def-word>` usually has few least-significant bits
     reserved (currently 6). First goes the primary tag (2 bits of
@@ -65,7 +66,7 @@ Header tag
 
 .. _def-immed:
 
-Immediate
+**Immediate**
     A term value, whose :ref:`primary tag <def-primary-tag>` is
     ``TAG_PRIMARY_IMMED1=3`` contains an immediate value. Two bits follow the
     primary tag and determine the value type (``TAG_IMMED1_*`` macros).
@@ -80,7 +81,7 @@ Immediate
 
 .. _def-heap:
 
-Heap
+**Heap**
     Dynamically allocated block of :ref:`Words <def-word>` used by a process.
     Heap can be resized with help of either ``ERTS_REALLOC*`` macro or by
     allocating a new fragment and moving data there using garbage collector.
@@ -88,7 +89,7 @@ Heap
 
 .. _def-port:
 
-Port
+**Port**
     A special value which you receive when you call ``erlang:open_port``.
     It is hooked to a port driver (built-in or custom). You can send it commands
     and receive messages from it, you can close it, link to it and monitor it
@@ -100,7 +101,7 @@ Port
 
 .. _def-primary-tag:
 
-Primary tag
+**Primary Tag**
     When a term value is encoded, several least-significant bits (currently
     2 bits) are reserved to represent type of contained term.
 
@@ -112,30 +113,38 @@ Primary tag
 
 .. _def-reduction:
 
-Reduction
+**Reduction**
     Each instruction or a call has a cost, it uses imaginary units called
-    'reductions' where 1 reduction is approximately one function call, and the
-    rest are derived from this also approximately.
+    *reductions*, where 1 reduction is approximately one function call.
+    Cost of other calls and operations is derived from this approximately.
 
 .. _def-registers:
 
-Registers
+**Registers**
     An array of :ref:`Words <def-word>` used to pass arguments in a function
     call. When a recursive call is made, affected registers are also saved onto
     the stack.
 
 .. _def-roots:
 
-Roots
-    During garbage collection, the roots are all known to be live values, found
-    on the stack and in the registers. Anything that can be traced by following
-    references in roots is considered to be reachable data. This data is moved
-    to the new heap. Previous heap is discarded, because no data can be
-    reached on it anymore.
+**Roots**
+    During garbage collection, the roots are all known to be live values,
+    they are collected from:
+
+    *   the stack
+    *   the live registers
+    *   the process dictionary
+    *   the message queue
+    *   the group leader and the exception reason fields.
+
+    Anything that can be traced by following references from the roots is
+    considered to be reachable data.
+    This data is moved to the new heap.
+    Previous heap is discarded, because no data can be reached on it anymore.
 
 .. _def-scheduler:
 
-Scheduler
+**Scheduler**
     Scheduler is a loop which runs on a fixed CPU core and it either fetches
     and executes next instruction based on instruction pointer in current
     process, or takes next process in the queue. As soon as a process has been
@@ -145,14 +154,14 @@ Scheduler
     some sort of fair scheduling where everyone is guaranteed a slice of time,
     no matter how busy some processes are.
 
-Slot
+**Slot**
     A special tagged value which points at a register, float register, or a
     stack slot. It is used internally by instructions and never appears in
     Erlang programs as data.
 
 .. _def-stack:
 
-Stack
+**Stack**
     A section of young heap of a process, which is used as temporary storage and
     return stack by a process. A new process creates a stack which has zero size
     and begins at the ``heap_end``.
@@ -164,7 +173,7 @@ Stack
 
 .. _def-stack-frame:
 
-Stack Frame
+**Stack Frame**
     Functions can create a stack frame by pushing a :ref:`CP <def-cp>` value
     and reserving several extra words on stack. Sometimes, when code throws an
     exception, VM scans the stack to build a stacktrace and uses these CP values
@@ -177,7 +186,7 @@ Stack Frame
 
 .. _def-term:
 
-Term
+**Term**
     A term is any value in Erlang. Internally a term is a :ref:`Word <def-word>`
     with few least-significant bits reserved (2 to 6 bits depending on the value)
     which define its type. Remaining bits either contain the value itself (for
@@ -186,7 +195,7 @@ Term
 
 .. _def-terminate:
 
-Terminating a Process
+**Terminating a Process**
     An exit or kill signal is sent to a process which works similar to an
     exception. If process was able to catch an exit signal (``trap_exit``), then
     nothing else happens.
@@ -197,7 +206,7 @@ Terminating a Process
 
 .. _def-nonvalue:
 
-THE_NON_VALUE
+**THE_NON_VALUE**
     Internal value used by emulator, you will never be able to see it from Erlang.
     It marks exception or special type of return value from BIF functions, also
     it used to mark memory during garbage collection.
@@ -211,7 +220,7 @@ THE_NON_VALUE
 
 .. _def-word:
 
-Word
+**Word**
     Machine-dependent register-sized unsigned integer. This will have width of
     32 bits on 32-bit architecture, and 64 on a 64-bit architecture.
     In BEAM source code Word can be unsigned (UWord) or signed (SWord).

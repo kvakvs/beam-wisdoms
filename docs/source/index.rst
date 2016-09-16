@@ -24,13 +24,11 @@ ELI5 Section (Explain Me Like I'm Five)
     eli5-types
     eli5-etf
 
-TODO
-````
-
-ELI5 scheduling (extend);
-ELI5 IO (extend);
-ELI5 Ext term format;
-ELI5 dirty schedulers
+.. todo::
+    ELI5 scheduling (extend);
+    ELI5 IO (extend);
+    ELI5 Ext term format;
+    ELI5 dirty schedulers
 
 Deeper Knowledge Section
 ------------------------
@@ -46,13 +44,11 @@ Deeper Knowledge Section
     indepth-beam-file
     indepth-beam-instructions
 
-TODO
-````
-
-More details from ELI5 articles;
-IO and ports;
-Links and monitors;
-ETS?;
-BIFs, traps;
-Process: Exceptions;
-Ext term format
+.. todo::
+    More details from ELI5 articles;
+    IO and ports;
+    Links and monitors;
+    ETS?;
+    BIFs, traps;
+    Process: Exceptions;
+    Ext term format
