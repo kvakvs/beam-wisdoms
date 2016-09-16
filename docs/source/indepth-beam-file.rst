@@ -89,7 +89,8 @@ Encodes exported functions and arity in the ``-export([]).`` attribute.
 Until the ``count`` do:
 
 *   Read U32/big export name atom index. Sanity check: atom table range.
-*   Read U32/big arity, U32/big label
+*   Read U32/big arity, U32/big label (offset in BEAM code section, should
+    be translated into the loaded code offset).
 
 "LitT" - Literals Table
 ```````````````````````

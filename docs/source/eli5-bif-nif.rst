@@ -4,6 +4,10 @@ BIF and NIF functions ELI5
 BIF Functions
 -------------
 
+Unless you work on OTP C source, you will never have to create own BIF function.
+If you want to implement own native function for your project,
+check out the next section about NIFs!
+
 In the standard Erlang library most functions are implemented in Erlang. But
 many features of the virtual machine and internal functions are impossible
 to reach from pure Erlang. So they were written in C and are exported as BIF
@@ -27,9 +31,6 @@ can access as many :ref:`Term <def-term>` (``Eterm`` C type) registers as it nee
 A BIF must return a :ref:`Term <def-term>` value or a ``THE_NON_VALUE``
 for special execution control features like traps, yields and exceptions.
 
-Unless you work on OTP C source, you will never have to create own BIF function.
-If you want to implement own native function for your project,
-read on about NIFs!
 
 NIF Functions
 -------------
@@ -48,5 +49,6 @@ Still even if it is simplified, one must be careful! A badly written NIF is
 able to tip over the whole virtual machine or hog the resources and slow the
 execution to a grind.
 
-See :doc:`interfacing` for a list of NIF, interoperability libraries, and port
-drivers for different programming languages.
+.. seealso::
+    :doc:`interfacing` for a list of NIF, interoperability libraries, and
+    port drivers for different programming languages.

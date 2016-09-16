@@ -15,7 +15,7 @@ ELI5 Section (Explain Me Like I'm Five)
 ---------------------------------------
 
 .. toctree::
-    :maxdepth: 2
+    :maxdepth: 1
 
     eli5-vm
     eli5-atoms
