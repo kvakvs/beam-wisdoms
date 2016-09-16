@@ -28,9 +28,7 @@ ELI5 Section (Explain Me Like I'm Five)
     eli5-property-based
 
 .. todo::
-    ELI5 scheduling (extend);
     ELI5 IO (extend);
-    ELI5 Ext term format;
     ELI5 dirty schedulers
 
 Deeper Knowledge Section

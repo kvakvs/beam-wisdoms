@@ -39,9 +39,9 @@ C label. An array of C labels is stored at the end of the same VM loop routine
 and is used as the lookup table.
 
 .. seealso::
-    In depth: :doc:`indepth-beam-file`.
+    BEAM Wisdoms: In depth: :doc:`indepth-beam-file`.
 
-    In depth: :doc:`indepth-beam-instructions`.
+    BEAM Wisdoms: In depth: :doc:`indepth-beam-instructions`.
 
 Threaded VM Loop
 ----------------

@@ -50,5 +50,5 @@ able to tip over the whole virtual machine or hog the resources and slow the
 execution to a grind.
 
 .. seealso::
-    :doc:`interfacing` for a list of NIF, interoperability libraries, and
-    port drivers for different programming languages.
+    BEAM Wisdoms: :doc:`interfacing` for a list of NIF, interoperability
+    libraries, and port drivers for different programming languages.
