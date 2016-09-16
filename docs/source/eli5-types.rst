@@ -34,8 +34,8 @@ Dialyzer
 Dialyzer takes compiled BEAM or ERL source files as input, then
 tries to guess types (type inference).
 
-How this works in few words
-```````````````````````````
+How This Works
+``````````````
 
 Say you have written a function, ``f`` which takes one argument ``X`` and
 returns something.

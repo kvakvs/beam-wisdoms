@@ -25,6 +25,7 @@ ELI5 Section (Explain Me Like I'm Five)
     eli5-bif-nif
     eli5-types
     eli5-etf
+    eli5-property-based
 
 .. todo::
     ELI5 scheduling (extend);
