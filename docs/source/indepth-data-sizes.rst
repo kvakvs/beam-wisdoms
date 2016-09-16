@@ -32,30 +32,44 @@ Size of a list in memory will be ``2*num_cells`` :ref:`Words <def-word>`.
 Boxed
 -----
 
-Boxed values typically have an `arity`, which is stored in most-significant bits
-of their first word, following the header tag.
+Boxed value is a pointer to the heap or some other area.
+A Box always points to a Header (below) except during GC.
 
-They are: arityval (a **tuple**),
+Header
+------
+
+A Box always points to a Header except during GC.
+Header word typically contains an `arity`, which is stored in most-significant
+bits of their first word, following the header tag (which is 4+2 bits).
+
+Header is a special tag which hides all sorts of internal opaque data. Header
+can be found on heap only and remaining most-significant bits usually represent
+its size (arity). For maps, arity is calculated using different formula (see
+``MAP_HEADER_ARITY`` macro).
+
+By header tag headers can mark the beginning of:
+arityval (a **tuple**),
 **fun** (closure with frozen variable values),
 positive and negative **bigint** (tagged separately to avoid storing sign bit),
 **float**, **export**, **refvalue**, **refcounted binary**, **heap binary**,
 **subbinary**, external **pid**, **port**, **ref**,
 **matchstate** (internal object) and **map**.
 
-Tuple size: its arity plus 1 :ref:`Word <def-word>` header.
+Tuple
+`````
 
-Float size: always 64 bit (1 or 2 words) + 1 :ref:`Word <def-word>` header.
+Tuple size is its arity plus 1 :ref:`Word <def-word>` header.
 
-Bigint size: ``ceil(log2^64(Number))`` Words + 1 :ref:`Word <def-word>`
-header. Thus a <=64bit will take 1 word, 65-127bit will take 2 words and so on.
+Float
+`````
+
+Float size is always 64 bit (1 or 2 words) + 1 :ref:`Word <def-word>` header.
+
+Big Integer
+```````````
+
+Bigint size is ``ceil(log2^64(Number))`` :ref:`Words <def-word>`
++ 1 :ref:`Word <def-word>` header.
+Thus a <=64bit integer will take 1 word,65-127bit will take 2 words and so on.
 On 32-bit architectures, of course, the Word size is 32 bit and everything is
 32-bit based.
-
-
-Header
-------
-
-Header is a special tag which hides all sorts of internal opaque data. Header
-can be found on heap only and remaining most-significant bits usually represent
-its size (arity). For maps, arity is calculated using different formula (see
-``MAP_HEADER_ARITY`` macro).
