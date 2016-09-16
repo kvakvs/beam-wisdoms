@@ -31,5 +31,6 @@ Then atoms in the message are replaced with indexes in this table.
 It is impossible to encode internal VM value types which never appear in
 Erlang programs, such as ``THE_NON_VALUE``, references to registers, CP etc.
 
-See detailed format description in the
-`ETF documentation <http://erlang.org/doc/apps/erts/erl_ext_dist.html>`_.
+.. seealso::
+    `External Term Format <http://erlang.org/doc/apps/erts/erl_ext_dist.html>`_
+    documentation.

@@ -20,7 +20,10 @@ Repeat until end of file:
 *   Read U32/big chunk length. This is the data size.
 *   Perform chunk-dependent reading (see subsections below)
 *   To find next chunk, pad the length to the multiple of ALIGN=4
-    ``file_pos += ALIGN * ((chunk_length + ALIGN - 1) / ALIGN);``
+
+    .. code-block:: c
+
+        file_pos += ALIGN * ((chunk_length + ALIGN - 1) / ALIGN);
 
 "Atom" - The Atoms Table
 ````````````````````````
