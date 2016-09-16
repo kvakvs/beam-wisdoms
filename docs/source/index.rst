@@ -3,11 +3,13 @@
    You can adapt this file completely to your liking, but it should at least
    contain the root `toctree` directive.
 
-Welcome to BEAM VM Wisdoms!
-===========================
+Welcome, adventurer!
+====================
 
-See below the wisdoms collected so far. Suggest more ideas in my github
-repository https://github.com/kvakvs/beam-wisdoms
+This is the collection of easy to read (ELI5) articles as well as in-depth
+knowledge such as VM internals, memory layout, opcodes etc.
+The project is work in progress, so come back soon!
+Github repository for pages https://github.com/kvakvs/beam-wisdoms
 
 ELI5 Section (Explain Me Like I'm Five)
 ---------------------------------------

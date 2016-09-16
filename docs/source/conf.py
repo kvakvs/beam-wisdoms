@@ -133,7 +133,7 @@ html_theme = 'alabaster'
 # The name for this set of Sphinx documents.
 # "<project> v<release> documentation" by default.
 #
-# html_title = u'BEAM VM Wisdoms v0.1'
+#html_title = u'BEAM VM Wisdoms'
 
 # A shorter title for the navigation bar.  Default is the same as html_title.
 #
@@ -233,7 +233,7 @@ html_static_path = ['_static']
 # html_search_scorer = 'scorer.js'
 
 # Output file base name for HTML help builder.
-htmlhelp_basename = 'BEAMVMWisdomsdoc'
+htmlhelp_basename = 'BEAM-Wisdoms'
 
 # -- Options for LaTeX output ---------------------------------------------
 
@@ -259,7 +259,7 @@ latex_elements = {
 # (source start file, target name, title,
 #  author, documentclass [howto, manual, or own class]).
 latex_documents = [
-    (master_doc, 'BEAMVMWisdoms.tex', u'BEAM VM Wisdoms Documentation',
+    (master_doc, 'BEAM-Wisdoms.tex', u'BEAM VM Wisdoms',
      u'Dmytro Lytovchenko', 'manual'),
 ]
 
@@ -301,7 +301,7 @@ latex_documents = [
 # One entry per manual page. List of tuples
 # (source start file, name, description, authors, manual section).
 man_pages = [
-    (master_doc, 'beamvmwisdoms', u'BEAM VM Wisdoms Documentation',
+    (master_doc, 'beamwisdoms', u'BEAM VM Wisdoms',
      [author], 1)
 ]
 
@@ -316,8 +316,9 @@ man_pages = [
 # (source start file, target name, title, author,
 #  dir menu entry, description, category)
 texinfo_documents = [
-    (master_doc, 'BEAMVMWisdoms', u'BEAM VM Wisdoms Documentation',
-     author, 'BEAMVMWisdoms', 'One line description of project.',
+    (master_doc, 'BEAM-Wisdoms', u'BEAM VM Wisdoms',
+     author, 'Dmytro Lytovchenko',
+    'Easy to read (ELI5) and in-depth explanations of how VM works, data layout, opcodes etc.',
      'Miscellaneous'),
 ]
 
