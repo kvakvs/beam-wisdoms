@@ -8,8 +8,8 @@ Immediate values
 ----------------
 
 .. image:: _static/img/memory-layout-immed.png
-    :width: 250
-    :align: right
+    :width: 300
+    :align: center
 
 Immediate types always occupy 1 :ref:`Word <def-word>`. To know if you found
 an immediate, its least-significant 2 bits will have value
@@ -42,28 +42,32 @@ Lists (Cons)
 ------------
 
 .. image:: _static/img/memory-layout-list.png
-    :width: 300
-    :align: right
+    :width: 400
+    :align: center
 
 A list term is boxed value (i.e. contains a pointer to heap). 2 least-significant
 bits of list value have ``TAG_PRIMARY_LIST=1``, remaining bits are the pointer.
 
 A value on heap
 contains 2 :ref:`Words <def-word>` -- namely CAR (or list head) and
-CDR (list tail) (see ``CAR`` and ``CDR`` macros in ``erl_term.h``).
+CDR (list tail) (see ``CAR`` and ``CDR`` macros in ``emulator/beam/erl_term.h``).
 This pair of words is called "Cons Cell" (terminology from
 Lisp and functional programming). Cons cell has no header word stored in memory.
 
 Each cons cell contains pointer to next cell in CDR (tail).
 As this is also visible from Erlang, last cons cell of a list contains ``NIL``
-(empty list []) for tail, or a non-list :ref:`Term <def-term>` value.
+(a special value for empty list ``[]``) or a non-list :ref:`Term <def-term>`
+value (this makes *improper* list).
+
+This structure may look inefficient, but on the other hand it allows
+connecting any tail of any list to multiple cons cells to reuse existing data.
 
 Boxed
 -----
 
 .. image:: _static/img/memory-layout-box.png
-    :width: 300
-    :align: right
+    :width: 350
+    :align: center
 
 Boxed value is a pointer with 2 least-significant bits tagged with
 ``TAG_PRIMARY_BOXED=2``. Remaining bits are the pointer.
@@ -88,8 +92,8 @@ Tuple (ARITYVAL=0)
 `````````````````````````
 
 .. image:: _static/img/memory-layout-tuple.png
-    :width: 300
-    :align: right
+    :width: 350
+    :align: center
 
 A tuple has header word tagged with ``TAG_PRIMARY_HEADER`` with ``ARITYVAL_SUBTAG``.
 Remaining bits in header word represent tuple arity
@@ -104,8 +108,8 @@ Bignum (NEG=2/POS_BIG=3)
 ```````````````````````````````
 
 .. image:: _static/img/memory-layout-bignum.png
-    :width: 300
-    :align: right
+    :width: 350
+    :align: center
 
 Bignums have header word tagged with ``TAG_PRIMARY_HEADER`` followed by either
 ``POS_BIG_SUBTAG`` or ``NEG_BIG_SUBTAG``. Remaining bits in header word are arity,
@@ -117,13 +121,17 @@ Most significant word goes first.
 Reference (REF=4)
 ````````````````````````
 
-See struct ``RefThing`` in ``erl_term.h``.
+.. image:: _static/img/memory-layout-ref.png
+    :width: 350
+    :align: center
+
+See struct ``RefThing`` in ``emulator/beam/erl_term.h``.
 Contains header word tagged with ``TAG_PRIMARY_HEADER`` with ``REF_SUBTAG`` which
 also matches the first field of ``RefThing``.
 
 Following are other ``RefThing`` fields (3 32-bit words or 2 64-bit words) which
 have the ref value stored in them. Internal (local) ref layout is explained in
-``erl_term.h`` search for text "Ref layout (internal references)" and
+``emulator/beam/erl_term.h`` search for text "Ref layout (internal references)" and
 "Ref layout on a 64-bit" (2 comments).
 
 Fun/Closure (FUN=5)
@@ -146,7 +154,25 @@ Followed by 64 bit of C ``double`` IEEE-754 format.
 Export (EXPORT=7)
 ````````````````````````
 
-Refers to a ``{Mod, Fun, Arity}``.
+.. image:: _static/img/memory-layout-export.png
+    :width: 250
+    :align: right
+
+Refers to a ``{Mod, Fun, Arity}``. Contains a pointer to the *export table*.
+Always has arity 1 (because only one pointer).
+
+A record in export table contains:
+
+*   Pointers to all (old and current) versions of the code for the function
+*   2 words with ``func_info`` opcode for the function.
+    Note, that this is executable BEAM code.
+*   3 words: Module (atom), Function (atom), Arity (as untagged integer)
+*   1 word which is 0 or may contain a apply, call or breakpoint opcode.
+    Note, that this is executable BEAM code.
+*   1 word argument for the previous opcode. May be a pointer to BEAM code,
+    a pointer to a C BIF function or 0.
+
+.. seealso:: ``Export`` struct in ``emulator/beam/export.h``
 
 Reference-counted Binary (REFC_BINARY=8)
 ```````````````````````````````````````````````
