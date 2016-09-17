@@ -87,6 +87,10 @@ Header values can never be found in register or on stack. This is heap-only data
 Tuple (ARITYVAL=0)
 `````````````````````````
 
+.. image:: _static/img/memory-layout-tuple.png
+    :width: 300
+    :align: right
+
 A tuple has header word tagged with ``TAG_PRIMARY_HEADER`` with ``ARITYVAL_SUBTAG``.
 Remaining bits in header word represent tuple arity
 (see ``arityval`` and ``make_arityval`` macros).
@@ -98,6 +102,10 @@ tuple value will be dropped.
 
 Bignum (NEG=2/POS_BIG=3)
 ```````````````````````````````
+
+.. image:: _static/img/memory-layout-bignum.png
+    :width: 300
+    :align: right
 
 Bignums have header word tagged with ``TAG_PRIMARY_HEADER`` followed by either
 ``POS_BIG_SUBTAG`` or ``NEG_BIG_SUBTAG``. Remaining bits in header word are arity,
