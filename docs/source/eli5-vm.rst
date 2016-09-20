@@ -46,6 +46,11 @@ and is used as the lookup table.
 Threaded VM Loop
 ----------------
 
+VM emulator loop in ``emulator/beam/beam_emu.s`` contains a lot of small
+pieces of code, each having a label and handling one BEAM instruction.
+They all belong to one very long function.
+A table of labels is stored in the same function which is used as lookup table.
+
 After the loading opcodes are replaced with such label addresses, followed by
 arguments. For example, for opcode #1, an element with index 1 from labels
 array is placed in the code memory.
