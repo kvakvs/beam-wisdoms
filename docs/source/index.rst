@@ -53,3 +53,15 @@ Deeper Knowledge Section
     BIFs, traps;
     Process: Exceptions;
     Ext term format
+
+Working with OTP Source
+-----------------------
+
+This section tries to capture existing rules in OTP team and coding rules
+that one must follow when contributing along with own ideas.
+
+.. toctree::
+    :maxdepth: 1
+
+    otp-c-style-guide
+    otp-cpp-ramblings
