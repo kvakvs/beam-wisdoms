@@ -11,6 +11,12 @@ knowledge such as VM internals, memory layout, opcodes etc.
 The project is work in progress, so come back soon!
 Github repository for pages https://github.com/kvakvs/beam-wisdoms
 
+Latest
+``````
+
+*   2016-09-25  :doc:`otp-cpp-ramblings`
+*   2016-09-28  :doc:`eli5-tracing`
+
 ELI5 Section (Explain Me Like I'm Five)
 ---------------------------------------
 
@@ -22,6 +28,7 @@ ELI5 Section (Explain Me Like I'm Five)
     eli5-processes
     eli5-process-heap
     eli5-io
+    eli5-tracing
     eli5-bif-nif
     eli5-types
     eli5-etf
@@ -54,14 +61,6 @@ Deeper Knowledge Section
     Process: Exceptions;
     Ext term format
 
-Working with OTP Source
------------------------
+Smaller things you would've never noticed otherwise. OTP C source-related.
 
-This section tries to capture existing rules in OTP team and coding rules
-that one must follow when contributing along with own ideas.
-
-.. toctree::
-    :maxdepth: 1
-
-    otp-c-style-guide
-    otp-cpp-ramblings
+:doc:`otp-c-style-guide`, :doc:`otp-cpp-ramblings`, :doc:`otp-c-refactor-todo`
