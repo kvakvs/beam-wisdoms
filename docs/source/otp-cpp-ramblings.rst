@@ -155,3 +155,6 @@ where ``erts_alloc/realloc`` are happening and fix the type casts there.
 
 Generated tables also use pointer conversion and the generation scripts must be
 mended (several lines changes in few places).
+
+Note: https://www.youtube.com/watch?v=w5Z4JlMJ1VQ
+CppCon 2016: Tim Haines “Improving Performance Through Compiler Switches..."
