@@ -11,6 +11,8 @@ J. Daniel Garcia and B. Stroustrup:
 Isocpp.org. August 2015. They managed to reduce instruction count, improve
 branch miss ratio, thus improving the performance.
 
+Another success story: Porting MAME (multiple arcade machine emulator) from C to modern C++ https://www.youtube.com/watch?v=wAUnUWYaA5s
+
 
 Portability Benefits
 --------------------
