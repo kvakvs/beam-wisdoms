@@ -284,11 +284,12 @@ This instruction is preceded by a matching ``catch`` instruction.
 #64 move
 ````````
 
-Spec: ``move From To``
+Spec: ``move Src Dst``
 
-Moves value ``From`` to a slot ``To``.
-``From`` can be a value or a slot.
-``To`` must be a slot.
+Moves value from the ``Src`` to the ``Dst``.
+
+``Src`` can be a value or a slot.
+``Dst`` must be a slot.
 
 #65 get_list
 ````````````

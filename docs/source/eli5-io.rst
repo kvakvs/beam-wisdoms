@@ -19,24 +19,31 @@ CPU time to process your data, you can send messages to it, also it can send
 messages back to you. You can link to a port or monitor a port (monitors added
 since v.19).
 
+Port Tasks
+----------
+
+Each port similar to processes gets assigned to one scheduler.
+Every scheduler on each CPU core will periodically check assigned ports and
+perform polling and maintenance (this is called running port tasks).
+This gives CPU time to port drivers to perform actual IO and deliver results
+to the processes who are waiting.
+
+To improve this situation and to separate port tasks from schedulers, so that
+they don't affect main code, Async Threads have been invented.
+VM creates extra CPU threads which have only one primary goal ---
+to serve IO tasks.
+
+This can be controlled with ``+A<number>`` command line flag.
+Default value is 10 async threads.
+
 Port Driver
 -----------
 
-A port driver is a C module with several functions defined.
-Define an ``erl_drv_entry`` variable (a struct) and fill it with pointers to
-callback functions.
-You will need to cover things such as starting your driver,
-stopping it, opening a port, sending commands and receiving data, and few other.
+A C module can be registered by name as a port driver. You can specify, which
+driver to invoke, when opening a port.
+Port driver performs several basic commands as opening, closing a port, sending
+data to it or reading from it. Socket interface, OS process spawning -- for
+example they are implemented as port drivers.
 
 .. seealso::
-    BEAM Wisdoms: :doc:`interfacing`
-
-    `Driver HowTo <http://erlang.org/doc/man/erl_driver.html>`_
-
-    `Port Driver and erl_drv_entry documentation <http://erlang.org/doc/man/driver_entry.html>`_
-
-Load your port driver and register it in the system under a name
-(``add_driver_entry``).
-
-.. seealso::
-    `Erl Dynamic Driver Loader Linker <http://erlang.org/doc/man/erl_ddll.html>`_
+    Technical details :doc:`indepth-io`

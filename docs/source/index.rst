@@ -14,8 +14,7 @@ Github repository for pages https://github.com/kvakvs/beam-wisdoms
 Latest
 ``````
 
-*   2016-09-25  :doc:`otp-cpp-ramblings`
-*   2016-09-28  :doc:`eli5-tracing`
+*   2016-10-17  :doc:`eli5-io` (upd.), :doc:`indepth-io`
 
 ELI5 Section (Explain Me Like I'm Five)
 ---------------------------------------
@@ -35,7 +34,6 @@ ELI5 Section (Explain Me Like I'm Five)
     eli5-property-based
 
 .. todo::
-    ELI5 IO (extend);
     ELI5 dirty schedulers
 
 Deeper Knowledge Section
@@ -51,6 +49,7 @@ Deeper Knowledge Section
     interfacing
     indepth-beam-file
     indepth-beam-instructions
+    indepth-io
 
 .. todo::
     More details from ELI5 articles;
