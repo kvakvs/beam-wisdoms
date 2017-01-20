@@ -49,7 +49,7 @@ master_doc = 'index'
 
 # General information about the project.
 project = u'BEAM VM Wisdoms'
-copyright = u'2016, Dmytro "kvakvs" Lytovchenko'
+copyright = u'2016-2017, Dmytro "kvakvs" Lytovchenko'
 author = u'Dmytro "kvakvs" Lytovchenko'
 
 # The version info for the project you're documenting, acts as replacement for
@@ -133,11 +133,11 @@ html_theme = 'alabaster'
 # The name for this set of Sphinx documents.
 # "<project> v<release> documentation" by default.
 #
-#html_title = u'BEAM VM Wisdoms'
+html_title = u'BEAM VM Wisdoms'
 
 # A shorter title for the navigation bar.  Default is the same as html_title.
 #
-# html_short_title = None
+html_short_title = "BEAM Wisdoms"
 
 # The name of an image file (relative to this directory) to place at the top
 # of the sidebar.

@@ -1,7 +1,4 @@
-.. BEAM VM Wisdoms documentation master file, created by
-   sphinx-quickstart on Sat Aug 27 14:47:51 2016.
-   You can adapt this file completely to your liking, but it should at least
-   contain the root `toctree` directive.
+.. BEAM VM Wisdoms documentation master file
 
 Welcome, adventurer!
 ====================
@@ -15,7 +12,7 @@ Latest
 ``````
 
 *   2017-01-21  updated hints about ``StrT`` BEAM section and fixed Github links
-                to gluonvm which is now deprecated ``gluonvm1``.
+                to ``gluonvm`` which is now deprecated and renamed to ``gluonvm1``.
 *   2016-10-17  :doc:`eli5-io` (upd.), :doc:`indepth-io`
 
 ELI5 Section (Explain Me Like I'm Five)
@@ -35,8 +32,6 @@ ELI5 Section (Explain Me Like I'm Five)
     eli5-etf
     eli5-property-based
 
-.. todo::
-    ELI5 dirty schedulers
 
 Deeper Knowledge Section
 ------------------------
