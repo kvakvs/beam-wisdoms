@@ -153,6 +153,18 @@ Until the ``num_filenames`` do (fill the file names table):
 *   Read string of bytes
 *   Convert string to an atom and push into file names table
 
+"StrT" - Strings Table
+``````````````````````
+
+What I've been able to see from the compiler source, is that this is a huge
+binary with all concatenated strings from the Erlang parsed AST (syntax tree).
+Everything ``{string, X}`` goes here. There are no size markers or separators
+between strings, so this part is confusing and requires more code reading.
+
+Consider ``compiler`` application in standard library, files:
+``beam_asm``, ``beam_dict`` (record ``#asm{}`` field ``strings``), and
+``beam_disasm``.
+
 .. _beam-term-format:
 
 BEAM Compact Term Encoding
@@ -173,12 +185,12 @@ Parse the value ``tag``:
 *   If the base tag was Extended=7, the byte>>4 + 7 will become extended tag:
     Float=8, List=9, FloatReg=10, AllocList=11, Literal=12.
 
-`Github read signed word <https://github.com/kvakvs/gluonvm/blob/master/emulator/src/beam_loader.cpp#L513-L533>`_
+`Github read signed word <https://github.com/kvakvs/gluonvm1/blob/master/emulator/src/beam_loader.cpp#L513-L533>`_
 routine used to read signed words later:
 
 .. _beam-parse-smallint:
 
-`Github parse small integer <https://github.com/kvakvs/gluonvm/blob/master/emulator/src/beam_loader.cpp#L535-L555>`_:
+`Github parse small integer <https://github.com/kvakvs/gluonvm1/blob/master/emulator/src/beam_loader.cpp#L535-L555>`_:
 (used to read SmallInt values later).
 
 *   Look into the first byte read, bit #3:

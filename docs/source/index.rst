@@ -14,6 +14,8 @@ Github repository for pages https://github.com/kvakvs/beam-wisdoms
 Latest
 ``````
 
+*   2017-01-21  updated hints about ``StrT`` BEAM section and fixed Github links
+                to gluonvm which is now deprecated ``gluonvm1``.
 *   2016-10-17  :doc:`eli5-io` (upd.), :doc:`indepth-io`
 
 ELI5 Section (Explain Me Like I'm Five)
