@@ -10,10 +10,9 @@ A call to ``dbg:tracer()`` starts a process which will receive this stream.
 You can create your own tracer with its own state and feed events to it.
 
 Tracing is able to produce overwhelming amount of irrelevant data.
-To limit this data a trace filter is applied with ``dbg:tp/4`` (and similar)
-caller.
+To limit this data a trace filter is applied with ``dbg:tp/4`` (and similar).
 
-When everything is prepared: a tracer and a filter, it is time to open the
+When everything is prepared: a tracer and a filter, it is time to open the2
 valve. A call to ``dbg:p/2`` (and similar) sets the trace target (a process,
 a port, spawn and exit events, everything, and so on).
 It will start sending everything that matches trace target and the filter
@@ -35,5 +34,8 @@ Each entry in this new table is a simple call to ``erts_bif_trace`` with a
 function name and arguments.
 This function performs the real call and sends trace messages.
 
-At certain moments another trick is used. Special BEAM opcode is pushed onto
-stack before BIF is finished, which will send trace event.
+At certain moments, when we want to trace a BIF trapping and returning to
+execution later, another trick is used.
+Address to a special BEAM opcode is pushed onto the stack before the BIF is
+finished. This allows to catch up when trap continues execution and will send
+the trace event correctly when the BIF was finished.

@@ -185,12 +185,12 @@ Parse the value ``tag``:
 *   If the base tag was Extended=7, the byte>>4 + 7 will become extended tag:
     Float=8, List=9, FloatReg=10, AllocList=11, Literal=12.
 
-`Github read signed word <https://github.com/kvakvs/gluonvm1/blob/master/emulator/src/beam_loader.cpp#L513-L533>`_
+`Github example of reading signed word <https://github.com/kvakvs/gluonvm1/blob/master/emulator/src/beam_loader.cpp#L513-L533>`_
 routine used to read signed words later:
 
 .. _beam-parse-smallint:
 
-`Github parse small integer <https://github.com/kvakvs/gluonvm1/blob/master/emulator/src/beam_loader.cpp#L535-L555>`_:
+`Github example of parsing a small integer <https://github.com/kvakvs/gluonvm1/blob/master/emulator/src/beam_loader.cpp#L535-L555>`_:
 (used to read SmallInt values later).
 
 *   Look into the first byte read, bit #3:
@@ -215,9 +215,12 @@ Now how to parse an encoded term:
     *   Tag=Label: use as label index, or 0 means invalid value.
     *   Tag=XRegister, Tag=YRegister: use as register index.
     *   Tag=Character (an Unicode symbol): use val as unsigned.
-    *   Tag=Extended List: create tuple of size smallint. For smallint/2 do: parse
-        a term (``case of`` value), parse a small int (label index), place them
-        into the tuple.
+    *   Tag=Extended List: contains pairs of terms.
+        Read smallint=``Size``. Create tuple of ``Size``, which will contain
+        ``Size/2`` values.
+        For ``Size/2`` do:
+        read and parse a term (``case of`` value),
+        read a small int (label index), place them into the tuple.
 
 .. _beam-code-format:
 
@@ -231,7 +234,9 @@ To read an encoded term see :ref:`BEAM Term format <beam-term-format>`.
     Opcode is converted into a label address (for threaded interpreter) or
     a pointer to handler function.
 *   Query opcode table and get arity for this opcode.
-*   Until ``arity``: parse term and put it into the output
+*   Until ``arity``: parse term and put it into the output one term or word at
+    a time. VM loop will read the opcode later and expect that ``arity``
+    args will follow it.
 *   If any of the parsed terms was a label value, remember its output position
     to later revisit it and overwrite with actual label address in memory
     (it is not known until code parsing is done).
