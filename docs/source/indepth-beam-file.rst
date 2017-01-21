@@ -216,7 +216,7 @@ Now how to parse an encoded term:
     *   Tag=XRegister, Tag=YRegister: use as register index.
     *   Tag=Character (an Unicode symbol): use val as unsigned.
     *   Tag=Extended List: contains pairs of terms.
-        Read smallint=``Size``. Create tuple of ``Size``, which will contain
+        Read smallint ``Size``. Create tuple of ``Size``, which will contain
         ``Size/2`` values.
         For ``Size/2`` do:
         read and parse a term (``case of`` value),
