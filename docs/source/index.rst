@@ -11,6 +11,7 @@ Github repository for pages https://github.com/kvakvs/beam-wisdoms
 Latest
 ``````
 
+*   2017-03-17  Data copying ELI5, efficiency guide
 *   2017-01-21  updated hints about ``StrT`` BEAM section and fixed Github links
                 to ``gluonvm`` which is now deprecated and renamed to ``gluonvm1``.
 *   2016-10-17  :doc:`eli5-io` (upd.), :doc:`indepth-io`
@@ -31,6 +32,7 @@ ELI5 Section (Explain Me Like I'm Five)
     eli5-types
     eli5-etf
     eli5-property-based
+    eli5-efficiency
 
 
 Deeper Knowledge Section
