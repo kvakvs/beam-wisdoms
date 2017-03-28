@@ -20,7 +20,7 @@ also be considered an immediate although it is a special value which only
 appears on stack and never in registers or heap.
 
 List
------
+----
 
 List value is a pointer to cons cell. Cons cell has size of two
 :ref:`Words <def-word>` (one for head, and another for tail). Cons cell can
@@ -73,3 +73,4 @@ Bigint size is ``ceil(log2^64(Number))`` :ref:`Words <def-word>`
 Thus a <=64bit integer will take 1 word,65-127bit will take 2 words and so on.
 On 32-bit architectures, of course, the Word size is 32 bit and everything is
 32-bit based.
+

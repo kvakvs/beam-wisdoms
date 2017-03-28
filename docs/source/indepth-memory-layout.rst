@@ -89,7 +89,7 @@ by internal emulator logic, they will be automatically garbage collected later.
 Header values can never be found in register or on stack. This is heap-only data structure.
 
 Tuple (ARITYVAL=0)
-`````````````````````````
+``````````````````
 
 .. image:: _static/img/memory-layout-tuple.png
     :width: 350
@@ -105,7 +105,7 @@ is used as optimization by Erlang compiler if it can prove, that intermediate
 tuple value will be dropped.
 
 Bignum (NEG=2/POS_BIG=3)
-```````````````````````````````
+````````````````````````
 
 .. image:: _static/img/memory-layout-bignum.png
     :width: 350
@@ -119,7 +119,7 @@ Following are bits of the bignum, a :ref:`Word <def-word>` at a time.
 Most significant word goes first.
 
 Reference (REF=4)
-````````````````````````
+`````````````````
 
 .. image:: _static/img/memory-layout-ref.png
     :width: 350
@@ -135,7 +135,7 @@ have the ref value stored in them. Internal (local) ref layout is explained in
 "Ref layout on a 64-bit" (2 comments).
 
 Fun/Closure (FUN=5)
-``````````````````````````
+```````````````````
 
 See struct ``ErlFunThing`` in ``erl_fun.h``.
 Contains header word tagged with ``TAG_PRIMARY_HEADER`` with ``FUN_SUBTAG`` which
@@ -146,13 +146,13 @@ pointer to function entry, arity, amount
 of frozen variables, pid of creator process and array of frozen variables.
 
 Float (FLOAT=6)
-``````````````````````
+```````````````
 
 Contains header word tagged with ``TAG_PRIMARY_HEADER`` with ``FLOAT_SUBTAG``.
 Followed by 64 bit of C ``double`` IEEE-754 format.
 
 Export (EXPORT=7)
-````````````````````````
+`````````````````
 
 .. image:: _static/img/memory-layout-export.png
     :width: 250
@@ -175,31 +175,41 @@ A record in export table contains:
 .. seealso:: ``Export`` struct in ``emulator/beam/export.h``
 
 Reference-counted Binary (REFC_BINARY=8)
-```````````````````````````````````````````````
+````````````````````````````````````````
 
 A pointer to binary on the binary heap. When this is destroyed, the reference
 count is reduced (can only happen during GC).
-A binary whose refc is 0 is deleted.
+Reference to refc binary is called procbin.
+A refc binary whose refc reaches 0 is deleted.
 
 Heap Binary (HEAP_BINARY=9)
-``````````````````````````````````
+```````````````````````````
 
-Smaller binary (under 64 bytes) which is directly placed on the process heap.
+A smaller binary (under 64 bytes) which is directly placed on the process heap.
 
 Sub-binary (SUB_BINARY=10)
-``````````````````````````````````
+``````````````````````````
+
+A temporary pointer to a part of another binary (either heap or refcounted,
+but never into another sub-binary).
+Can be produced by ``split_binary`` function.
+
+Match context
+`````````````
+
+Similar to sub-binary but is optimized for binary matching.
 
 Ext Pid 12
-```````````````
+``````````
 
 Pid containing node name. Refers to a process on another node.
 
 Ext Port 13
-`````````````````
+```````````
 
 Port containing node name. Refers to a port on another node.
 
 Ext Ref (EXTERNAL_REF=14)
-``````````````````````````````````````
+`````````````````````````
 
 External ref format is explained in ``erl_term.h`` search for "External thing layout".
