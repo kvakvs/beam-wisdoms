@@ -1,6 +1,10 @@
 BEAM Internal data sizes
 ========================
 
+.. seealso::
+    Data sizes in the
+    `Erlang Efficiency Guide <http://erlang.org/doc/efficiency_guide/advanced.html>`
+
 Each boxed term has size described below plus one word for term value
 itself which you store somewhere else (be it on heap then you should count size
 for this term too, or in register/on stack - then it will not consume heap
@@ -27,13 +31,16 @@ List value is a pointer to cons cell. Cons cell has size of two
 link to next cons cell and so on, until tail becomes a non-list term (for improper
 lists) or ``NIL`` (for proper lists).
 
-Size of a list in memory will be ``2*num_cells`` :ref:`Words <def-word>`.
+Size of a list is 1 :ref:`Word <def-word>` (for a pointer) and also on the heap
+``2*num_cells`` :ref:`Words <def-word>`.
 
 Boxed
 -----
 
-Boxed value is a pointer to the heap or some other area.
-A Box always points to a Header (below) except during GC.
+Boxed value is a pointer to the heap or some other area and always takes 1
+:ref:`Words <def-word>`.
+A Box always points to a memory block which starts with a Header (below)
+except during GC.
 
 Header
 ------
@@ -58,12 +65,14 @@ positive and negative **bigint** (tagged separately to avoid storing sign bit),
 Tuple
 `````
 
-Tuple size is its arity plus 1 :ref:`Word <def-word>` header.
+Tuple size on heap is its arity plus 1 :ref:`Word <def-word>` header.
+Also 1 :ref:`Word <def-word>` to store each pointer to the tuple box.
 
 Float
 `````
 
 Float size is always 64 bit (1 or 2 words) + 1 :ref:`Word <def-word>` header.
+Also 1 :ref:`Word <def-word>` to store each pointer to the float box.
 
 Big Integer
 ```````````
@@ -73,4 +82,4 @@ Bigint size is ``ceil(log2^64(Number))`` :ref:`Words <def-word>`
 Thus a <=64bit integer will take 1 word,65-127bit will take 2 words and so on.
 On 32-bit architectures, of course, the Word size is 32 bit and everything is
 32-bit based.
-
+Also +1 :ref:`Word <def-word>` to store each pointer to the bigint box.
