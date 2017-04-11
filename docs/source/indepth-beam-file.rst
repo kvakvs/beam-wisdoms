@@ -258,7 +258,9 @@ Now how to parse an encoded term:
         read a small int (label index), place them into the tuple.
 
 .. seealso ::
-    Refer to ``beam_asm:encode/2`` for details about how this is encoded.
+    Refer to ``beam_asm:encode/2`` in the ``compiler`` application for
+    details about how this is encoded. Tag values are presented in this
+    section, but also can be found in ``compiler/src/beam_opcodes.hrl``.
 
 .. _beam-code-format:
 
