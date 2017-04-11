@@ -173,11 +173,44 @@ BEAM Compact Term Encoding
 BEAM file uses a special encoding to store simple terms in BEAM file in
 a space-efficient way.
 It is different from memory term layout, used by BEAM VM.
+
+The idea is to stick as many type and value data into the 1st byte as possible::
+
+    7 6 5 4 3 | 2 1 0
+    ----------+------
+              | 0 0 0 — Literal
+              | 0 0 1 — Integer
+              | 0 1 0 — Atom
+              | 0 1 1 — X Register
+              | 1 0 0 — Y Register
+              | 1 0 1 — Label
+              | 1 1 0 — Character
+    0 0 0 1 0 | 1 1 1 — Extended — Float
+    0 0 1 0 0 | 1 1 1 — Extended — List
+    0 0 1 1 0 | 1 1 1 — Extended — Floating point register
+    0 1 0 0 0 | 1 1 1 — Extended — Allocation list
+    0 1 0 1 0 | 1 1 1 — Extended — Literal
+
 It uses first 3 bits of a first byte as a tag to specify the type of the
 following value.
-If the bits were all 1 (decimal 7), then few more bits are used.
+If the bits were all 1 (special value 7), then few more bits are used.
 
-Parse the value ``tag``:
+For values under 16 the value is placed entirely into bits 4-5-6-7 having bit
+3 set to 0.
+
+For values under 16#800 (2048) bit 3 is set to 1, marks that 1 continuation
+byte will be used and 3 most significant bits of the value will extend into
+this byte's bits 5-6-7.
+
+Larger and negative values are first converted to bytes.
+Then if the value takes 2..8 bytes, bits 3-4 will be set to 1, and bits
+5-6-7 will contain the ``(Bytes-2)`` size for the value, which follows.
+
+If the following value is greater than 8 bytes, then all bits 3-4-5-6-7
+will be set to 1, followed by a nested encoded unsigned ``?tag_u`` value
+of ``(Bytes-9):8``, and then the data.
+
+Example of parsing the value of ``tag``:
 
 *   Read a byte and see its first 3 bits, what they are. This is base tag.
     Literal=0, Integer=1, Atom=2, XRegister=3, YRegister=4, Label=5,
@@ -185,11 +218,13 @@ Parse the value ``tag``:
 *   If the base tag was Extended=7, the byte>>4 + 7 will become extended tag:
     Float=8, List=9, FloatReg=10, AllocList=11, Literal=12.
 
+A badly written and incomplete
 `Github example of reading signed word <https://github.com/kvakvs/gluonvm1/blob/master/emulator/src/beam_loader.cpp#L513-L533>`_
 routine used to read signed words later:
 
 .. _beam-parse-smallint:
 
+A badly written and incomplete
 `Github example of parsing a small integer <https://github.com/kvakvs/gluonvm1/blob/master/emulator/src/beam_loader.cpp#L535-L555>`_:
 (used to read SmallInt values later).
 
@@ -221,6 +256,9 @@ Now how to parse an encoded term:
         For ``Size/2`` do:
         read and parse a term (``case of`` value),
         read a small int (label index), place them into the tuple.
+
+.. seealso ::
+    Refer to ``beam_asm:encode/2`` for details about how this is encoded.
 
 .. _beam-code-format:
 
