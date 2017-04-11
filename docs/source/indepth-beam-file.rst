@@ -210,12 +210,21 @@ If the following value is greater than 8 bytes, then all bits 3-4-5-6-7
 will be set to 1, followed by a nested encoded unsigned ``?tag_u`` value
 of ``(Bytes-9):8``, and then the data.
 
-Example of parsing the value of ``tag``:
+.. seealso ::
+Refer to ``beam_asm:encode/2`` in the ``compiler`` application for
+details about how this is encoded. Tag values are presented in this
+section, but also can be found in ``compiler/src/beam_opcodes.hrl``.
 
-*   Read a byte and see its first 3 bits, what they are. This is base tag.
-    Literal=0, Integer=1, Atom=2, XRegister=3, YRegister=4, Label=5,
+Base and Extended Tag
+`````````````````````
+
+Let's parse the value of ``tag``:
+
+*   Read a byte and extract its least 3 bits. This is the base tag.
+    It can be Literal=0, Integer=1, Atom=2, XRegister=3, YRegister=4, Label=5,
     Character=6, Extended=7.
-*   If the base tag was Extended=7, the byte>>4 + 7 will become extended tag:
+*   If the base tag was Extended=7, then bits 4-5-6-7 PLUS 7 will become
+    the extended tag. It can have values
     Float=8, List=9, FloatReg=10, AllocList=11, Literal=12.
 
 A badly written and incomplete
@@ -228,15 +237,22 @@ A badly written and incomplete
 `Github example of parsing a small integer <https://github.com/kvakvs/gluonvm1/blob/master/emulator/src/beam_loader.cpp#L535-L555>`_:
 (used to read SmallInt values later).
 
-*   Look into the first byte read, bit #3:
+Reading the Value
+`````````````````
 
-    *  Bit #3 = 1: Look into bit #4:
+This is the logic, as was decoded from source code of BEAM VM and Ling VM.
+It looks at the bits in slightly different order.
 
-        *     Bit #4 = 1: Use remaining 3 bits of the byte as byte length
-                (if under 7 - read N+2 bytes into signed words,
-                if it is 7 - then length is larger than that and we have to
-                read length first - INFORMATION INCOMPLETE)
-        *     Bit #4 = 0: use remaining 3 bits + 8 more bits of the following byte
+*   Look into the first byte read, bit 3:
+
+    *  Bit 3 is 1, so look into bit 4:
+
+        *     Bit is 1: Use remaining 3 bits of the byte as byte length
+                (if under 7 - read ``N+2`` bytes into signed words,
+                if the value is 7 - then length is larger than that and we
+                have to read length first -- it follows as ``?tag_u=0``
+                (Literal) nested unsigned value)
+        *     Bit 4 is 0: use remaining 3 bits + 8 more bits of the following byte
 
     *  Bit #3 = 0: Use remaining 4 bits
 
@@ -244,9 +260,10 @@ Now how to parse an encoded term:
 
 *   Read a SmallInt, case ``tag`` of:
 
-    *   Tag=Integer or Literal: use smallint value.
+    *   Tag=Integer: use the value (signed?)
+    *   Tag=Literal: use smallint value as index in ``LitT`` table.
     *   Tag=Atom: use smallint value MINUS 1 as index in the atom table.
-        0 smallint means NIL (empty list).
+        0 smallint means ``NIL []``.
     *   Tag=Label: use as label index, or 0 means invalid value.
     *   Tag=XRegister, Tag=YRegister: use as register index.
     *   Tag=Character (an Unicode symbol): use val as unsigned.
@@ -256,11 +273,6 @@ Now how to parse an encoded term:
         For ``Size/2`` do:
         read and parse a term (``case of`` value),
         read a small int (label index), place them into the tuple.
-
-.. seealso ::
-    Refer to ``beam_asm:encode/2`` in the ``compiler`` application for
-    details about how this is encoded. Tag values are presented in this
-    section, but also can be found in ``compiler/src/beam_opcodes.hrl``.
 
 .. _beam-code-format:
 
