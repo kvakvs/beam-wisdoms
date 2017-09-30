@@ -25,8 +25,11 @@ Repeat until end of file:
 
         file_pos += ALIGN * ((chunk_length + ALIGN - 1) / ALIGN);
 
-"Atom" - The Atoms Table
-````````````````````````
+"Atom" and "AtU8" - Atoms Table
+```````````````````````````````
+
+Both tables have same format and same limitations (256 bytes max length)
+except that bytes in strings are treated either as latin1 or utf8.
 
 *   Read U32/big atoms count.
 *   For each atom: read byte length, followed by characters
@@ -125,6 +128,17 @@ Encodes imported functions in the ``-import([]).`` attribute.
 Until the ``count`` do:
 
 *   Read U32/big module atom index, U32/big function atom index, U32/big arity
+
+"LocT" - Local Functions
+````````````````````````
+
+Essentially same as the export table format ``ExpT`` for local functions.
+
+* Read U32/big count
+
+Until the ``count`` do:
+
+*   Read U32/big func atom index, U32/big arity, U32/big location (label)
 
 "Line" - Line Numbers Table
 ```````````````````````````
@@ -227,9 +241,9 @@ of ``(Bytes-9):8``, and then the data::
     1 1 1 1 1 | Tag>>
 
 .. seealso ::
-Refer to ``beam_asm:encode/2`` in the ``compiler`` application for
-details about how this is encoded. Tag values are presented in this
-section, but also can be found in ``compiler/src/beam_opcodes.hrl``.
+    Refer to ``beam_asm:encode/2`` in the ``compiler`` application for
+    details about how this is encoded. Tag values are presented in this
+    section, but also can be found in ``compiler/src/beam_opcodes.hrl``.
 
 Base and Extended Tag
 `````````````````````
