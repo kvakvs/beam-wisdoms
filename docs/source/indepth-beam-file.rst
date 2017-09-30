@@ -179,6 +179,13 @@ Consider ``compiler`` application in standard library, files:
 ``beam_asm``, ``beam_dict`` (record ``#asm{}`` field ``strings``), and
 ``beam_disasm``.
 
+"Attr" - Attributes
+```````````````````
+
+Contains two parts: a proplist of module attributes, encoded as External Term
+Format, and a compiler info (options and version) encoded similarly.
+
+
 .. _beam-term-format:
 
 BEAM Compact Term Encoding

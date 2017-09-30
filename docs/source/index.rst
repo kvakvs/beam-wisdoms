@@ -11,7 +11,7 @@ Github repository for pages https://github.com/kvakvs/beam-wisdoms
 Latest
 ``````
 
-*   2017-10-01  BEAM format: Added UTF8 atoms section, LocT section
+*   2017-10-01  BEAM format: Added UTF8 atoms section, LocT, Attr section
 *   2017-03-17  Data copying ELI5, efficiency guide
 
 ELI5 Section (Explain Me Like I'm Five)
