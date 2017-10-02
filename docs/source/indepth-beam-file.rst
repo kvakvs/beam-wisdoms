@@ -212,6 +212,12 @@ The idea is to stick as many type and value data into the 1st byte as possible::
     0 1 0 0 0 | 1 1 1 — Extended — Allocation list
     0 1 0 1 0 | 1 1 1 — Extended — Literal
 
+.. note::
+
+    In OTP 20 the Floats are encoded as literals, and every other extended code
+    is shifted, i.e. List becomes 1 (0b10111), Float register becomes 2 (0b100111),
+    alloc list becomes 3 (0b110111) and literal becomes 4 (0b1000111).
+
 It uses first 3 bits of a first byte as a tag to specify the type of the
 following value.
 If the bits were all 1 (special value 7), then few more bits are used.
