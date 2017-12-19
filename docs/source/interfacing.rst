@@ -39,7 +39,7 @@ Python
 *   py_interface
     `Website <http://www.lysator.liu.se/~tab/erlang/py_interface/>`_,
     `Github <git://github.com/tomas-abrahamsson/py_interface.git>`_
-    (license GPL)
+    (license LGPL)
 *   PyErl `Github <https://github.com/hamano/python-erlang-interface>`_ (license ?)
 
 Ruby
