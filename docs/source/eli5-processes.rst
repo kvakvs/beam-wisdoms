@@ -14,6 +14,25 @@ and an instruction pointer. Also, there are some extra fields for exception
 handling, tracing etc. A new process is this structure created with a minimal
 size heap.
 
+Spawning a new Process (Actor)
+``````````````````````````````
+
+When you call `spawn` or `spawn_link`, the VM allocates a small piece of memory
+with a new process header (approx 200-300 bytes) and the {heap with the stack}
+(they live together and take about 1kb initially). A new process is granted a
+new unique PID, which won't repeat for a fair amount of days or months after its
+death, and is registered in a process lookup table.
+
+There are no messages involved in process creation only a couple of memory
+allocations.
+
+So the newly created process is not known to any scheduler yet. It is then
+placed into a run queue for its priority (99.99% of processes run as normal),
+where one of schedulers is able to pick it up and begin executing. Newer
+versions of Erlang have run queues one per scheduler, but the principle is
+the same.
+
+
 Stack
 `````
 
