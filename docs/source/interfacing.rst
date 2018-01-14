@@ -34,6 +34,8 @@ Lua
 Python
 ``````
 
+*   `Pyrlang <https://github.com/esl/Pyrlang>`_ (Erlang node written in Python
+    gevent) (license Apache2)
 *   ErlPort (see below in "Ports")
 *   `erlang_py <https://github.com/okeuday/erlang_py/>`_ (license BSD)
 *   py_interface
