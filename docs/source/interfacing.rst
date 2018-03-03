@@ -12,8 +12,8 @@ C
 
 *   `edtk, a port driver toolkit <http://www.snookles.com/erlang/edtk/>`_
 *   `dryverl <http://dryverl.ow2.org/>`_ (license BSD)
-*   `C/C++ Generic Erlang Port Driver <https://github.com/okeuday/erlang_py/>`_
-    (license BSD)
+*   `C/C++ Generic Erlang Port Driver <https://github.com/okeuday/GEPD/>`_
+    (license MIT)
 *   `Nifty, a NIF wrapper generator <http://parapluu.github.io/nifty/>`_
 
 C++
@@ -21,8 +21,8 @@ C++
 
 *   `EPI <https://github.com/bsmr-erlang/epi>`_ (license LGPL)
 *   `eixx <https://github.com/saleyn/eixx>`_ (license Apache2)
-*   `C/C++ Generic Erlang Port Driver <https://github.com/okeuday/erlang_py/>`_
-    (license BSD)
+*   `C/C++ Generic Erlang Port Driver <https://github.com/okeuday/GEPD/>`_
+    (license MIT)
 *   `C++11 NIFPP <https://github.com/goertzenator/nifpp>`_ (license Boost)
 
 Lua
