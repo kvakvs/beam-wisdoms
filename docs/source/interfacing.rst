@@ -37,23 +37,23 @@ Python
 *   `Pyrlang <https://github.com/esl/Pyrlang>`_ (Erlang node written in Python
     gevent) (license Apache2)
 *   ErlPort (see below in "Ports")
-*   `erlang_py <https://github.com/okeuday/erlang_py/>`_ (license BSD)
+*   `erlang_py <https://github.com/okeuday/erlang_py/>`_ (license MIT)
 *   py_interface
     `Website <http://www.lysator.liu.se/~tab/erlang/py_interface/>`_,
     `Github <git://github.com/tomas-abrahamsson/py_interface.git>`_
     (license LGPL)
-*   PyErl `Github <https://github.com/hamano/python-erlang-interface>`_ (license ?)
+*   PyErl `Github <https://github.com/hamano/python-erlang-interface>`_ (license MPL)
 
 Ruby
 ````
 
 *   ErlPort (see below in "Ports")
-*   `Erlang Term Format (Ruby) <https://github.com/okeuday/erlang_rb>`_ (BSD)
+*   `Erlang Term Format (Ruby) <https://github.com/okeuday/erlang_rb>`_ (MIT)
 
 PHP
 ````
 
-*   `Erlang Term Format (PHP) <https://github.com/okeuday/erlang_php>`_ (BSD)
+*   `Erlang Term Format (PHP) <https://github.com/okeuday/erlang_php>`_ (MIT)
 
 
 Rust
@@ -65,12 +65,12 @@ Rust
 Javascript
 ``````````
 
-*   `Erlang Term Format (Javascript) <https://github.com/okeuday/erlang_js>`_ (BSD)
+*   `Erlang Term Format (Javascript) <https://github.com/okeuday/erlang_js>`_ (MIT)
 
 Perl
 ````
 
-*   `Erlang Term Format (Perl) <https://github.com/okeuday/erlang_pl>`_ (BSD)
+*   `Erlang Term Format (Perl) <https://github.com/okeuday/erlang_pl>`_ (MIT)
 
 Ports and Network
 -----------------
