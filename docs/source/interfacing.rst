@@ -12,8 +12,8 @@ C
 
 *   `edtk, a port driver toolkit <http://www.snookles.com/erlang/edtk/>`_
 *   `dryverl <http://dryverl.ow2.org/>`_ (license BSD)
-*   `C/C++ Generic Erlang Port Driver <https://github.com/okeuday/erlang_py/>`_
-    (license BSD)
+*   `C/C++ Generic Erlang Port Driver <https://github.com/okeuday/GEPD/>`_
+    (license MIT)
 *   `Nifty, a NIF wrapper generator <http://parapluu.github.io/nifty/>`_
 
 C++
@@ -21,8 +21,8 @@ C++
 
 *   `EPI <https://github.com/bsmr-erlang/epi>`_ (license LGPL)
 *   `eixx <https://github.com/saleyn/eixx>`_ (license Apache2)
-*   `C/C++ Generic Erlang Port Driver <https://github.com/okeuday/erlang_py/>`_
-    (license BSD)
+*   `C/C++ Generic Erlang Port Driver <https://github.com/okeuday/GEPD/>`_
+    (license MIT)
 *   `C++11 NIFPP <https://github.com/goertzenator/nifpp>`_ (license Boost)
 
 Lua
@@ -37,23 +37,23 @@ Python
 *   `Pyrlang <https://github.com/esl/Pyrlang>`_ (Erlang node written in Python
     gevent) (license Apache2)
 *   ErlPort (see below in "Ports")
-*   `erlang_py <https://github.com/okeuday/erlang_py/>`_ (license BSD)
+*   `erlang_py <https://github.com/okeuday/erlang_py/>`_ (license MIT)
 *   py_interface
     `Website <http://www.lysator.liu.se/~tab/erlang/py_interface/>`_,
     `Github <git://github.com/tomas-abrahamsson/py_interface.git>`_
     (license LGPL)
-*   PyErl `Github <https://github.com/hamano/python-erlang-interface>`_ (license ?)
+*   PyErl `Github <https://github.com/hamano/python-erlang-interface>`_ (license MPL)
 
 Ruby
 ````
 
 *   ErlPort (see below in "Ports")
-*   `Erlang Term Format (Ruby) <https://github.com/okeuday/erlang_rb>`_ (BSD)
+*   `Erlang Term Format (Ruby) <https://github.com/okeuday/erlang_rb>`_ (MIT)
 
 PHP
 ````
 
-*   `Erlang Term Format (PHP) <https://github.com/okeuday/erlang_php>`_ (BSD)
+*   `Erlang Term Format (PHP) <https://github.com/okeuday/erlang_php>`_ (MIT)
 
 
 Rust
@@ -65,12 +65,12 @@ Rust
 Javascript
 ``````````
 
-*   `Erlang Term Format (Javascript) <https://github.com/okeuday/erlang_js>`_ (BSD)
+*   `Erlang Term Format (Javascript) <https://github.com/okeuday/erlang_js>`_ (MIT)
 
 Perl
 ````
 
-*   `Erlang Term Format (Perl) <https://github.com/okeuday/erlang_pl>`_ (BSD)
+*   `Erlang Term Format (Perl) <https://github.com/okeuday/erlang_pl>`_ (MIT)
 
 Ports and Network
 -----------------
