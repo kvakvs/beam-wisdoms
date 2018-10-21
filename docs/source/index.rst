@@ -11,6 +11,7 @@ Github repository for pages https://github.com/kvakvs/beam-wisdoms
 Latest
 ``````
 
+*   2018-10-21  ELI5 for memory performance on BEAM
 *   2018-01-13  ELI5 Spawning a process (actor), amended ELI5 copying, Pyrlang added to interfacing
 *   2017-10-01  BEAM format: Added UTF8 atoms section, LocT, Attr section
 *   2017-03-17  Data copying ELI5, efficiency guide
@@ -32,6 +33,7 @@ ELI5 Section (Explain Me Like I'm Five)
     eli5-etf
     eli5-property-based
     eli5-efficiency
+    eli5-efficiency-memory-perf
 
 
 Deeper Knowledge Section

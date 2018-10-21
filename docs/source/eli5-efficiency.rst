@@ -17,7 +17,7 @@ Here are general rules regarding data copying and performance.
     (ports behave similar to processes, and own resources in a similar way).
 *   Large binaries >64 bytes are **never** copied, instead they are reference
     counted and reference is shared between processes. This is why you want to
-    GC all processes which touched a large binary periodically, otherwise it
+    GC periodically all processes which have touched a large binary, otherwise it
     may take a long time before the binary is freed.
 
 

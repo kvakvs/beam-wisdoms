@@ -23,7 +23,7 @@ You will need to cover things such as starting your driver,
 stopping it, opening a port, sending commands and receiving data, and few other.
 
 .. seealso::
-BEAM Wisdoms: :doc:`interfacing`
+    BEAM Wisdoms: :doc:`interfacing`
 
     `Driver HowTo <http://erlang.org/doc/man/erl_driver.html>`_
 
@@ -33,7 +33,7 @@ Load your port driver and register it in the system under a name
 (``add_driver_entry``).
 
 .. seealso::
-`Erl Dynamic Driver Loader Linker <http://erlang.org/doc/man/erl_ddll.html>`_
+    `Erl Dynamic Driver Loader Linker <http://erlang.org/doc/man/erl_ddll.html>`_
 
 .. todo::
-this goes to indepth section
+    this goes to indepth section
