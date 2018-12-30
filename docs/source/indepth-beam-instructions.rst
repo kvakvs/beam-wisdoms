@@ -374,15 +374,55 @@ Produces a callable fun object. ``Lambda`` should be resolved at load time
 to a function entry. Creates a callable box object on the heap which points
 to this fun object and also has space to store frozen values (Free variables).
 
+#104 try/2
+``````````
+
+Spec ``try Yregister Label``
+
+Begins a guarded code section by writing a special crafted catch value into the
+given Y register. The catch value points to the label in case of exception, where
+a ``try_case`` instruction is located.
+
+#105 try_end/1
+``````````````
+
+Spec: ``try_end Yregister``
+
+Ends the guarded section by clearing the catch value on stack with a NIL.
+
+#106 try_case/1
+```````````````
+
+Begins investigation of an exception, also clears the catch value on stack. From
+here if you need the exception to propagate, you have to raise it again.
+
+#107 try_case_end/1
+```````````````````
+
+#108 raise/2
+````````````
+
+Spec: ``raise Stacktrace ExcValue``
+
+A legacy instruction which takes error type from the provided stacktrace
+object and creates an exception with the exception value (second argument).
+
 #112 apply #113 apply_last
 ``````````````````````````
 
 Spec ``apply Arity``
 
+Spec ``apply_last Arity Dealloc``
+
 Calls function at ``X[Arity+1]`` in module ``X[Arity]``
-with arguments ``X[0..Arity-1]``.
-``Apply`` saves current instruction pointer into CP, while ``apply_last`` does not
-and performs a tail recursive call.
+with arguments ``X[0..Arity-1]``. Module is an atom or a tuple. Function is an
+atom.
+
+``Apply`` saves current instruction pointer into CP and performs a
+call to the destination.
+
+``Apply_last`` cuts the stack by ``Dealloc`` words preserving the CP on top
+of the stack, and then jumps to the destination.
 
 #136 trim
 `````````
