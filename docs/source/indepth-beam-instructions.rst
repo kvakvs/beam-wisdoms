@@ -365,6 +365,15 @@ Spec: ``call_ext_only Arity Destination::mfarity()``
 Performs a tail recursive call to a ``Destination`` |op-mfarity-def|.
 |op-no-update-cp|
 
+#89 bs_put_integer/5
+````````````````````
+
+Spec: ``bs_put_integer Fail=j Sz=sq Unit=u Flags=u Src=s``
+
+An integer from ``src`` and having bitsize ``sz`` is appended to the current
+writable binary (stored in the internal state) at the current bit offset
+(stored in the state too).
+
 #103 make_fun2
 ``````````````
 
@@ -407,6 +416,14 @@ Spec: ``raise Stacktrace ExcValue``
 A legacy instruction which takes error type from the provided stacktrace
 object and creates an exception with the exception value (second argument).
 
+#109 bs_init2/6
+```````````````
+
+Creates a new writable binary of requested size with some extra words, runs GC
+if needed, then the binary is stored in the internal state. Following ``bs_put*``
+instructions will add to it. The write bit offset in the internal state is
+also reset to 0.
+
 #112 apply #113 apply_last
 ``````````````````````````
 
@@ -431,3 +448,35 @@ Spec: ``trim N _Remaining``
 
 Drops ``N`` words on stack after saved CP, moving it ``N`` words up.
 
+Binary Matching and Operations
+------------------------------
+
+#119 bs_get_binary2/7
+`````````````````````
+
+Spec: ``bs_get_binary2 Fail MatchState Live Size Unit Dst``
+
+For current binary match position (started by ``bs_start_match*``) extract
+a sub-binary (a slice) and return it. ``Live`` is used for an occasional garbage
+collection act if the memory is tight. ``Size:Unit`` determines how many bits
+go into the result.
+
+
+#166 bs_start_match3
+````````````````````
+
+Spec ``bs_start_match3 Fail Context Live Dst``
+
+This opcode was introduced in OTP 22 and replaces ``bs_start_match2``.
+
+Depending on whether the value in the ``Context`` is binary, or an existing match
+state, creates a new match state if needed. The position from the match state is used
+for binary matching step by step by the following ``bs_*`` opcodes.
+
+#121 bs_test_tail2
+``````````````````
+
+Spec: ``bs_test_tail2 Fail, MatchState, N``
+
+Ensures that the match state has ``N`` bits remaining for processing. If this is
+not true, the VM will jump to the ``Fail`` label.
