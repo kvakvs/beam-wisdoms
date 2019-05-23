@@ -121,7 +121,7 @@ A better reference is in the
 "ImpT" - Imports Table
 ``````````````````````
 
-Encodes imported functions in the ``-import([]).`` attribute.
+Encodes functions from other modules invoked by the current module.
 
 * Read U32/big count
 
