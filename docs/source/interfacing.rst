@@ -62,6 +62,11 @@ Rust
 *   `Rustler <https://github.com/hansihe/Rustler>`_ (license Apache, MIT)
 *   `erlang-rust-nif <https://github.com/erszcz/erlang-rust-nif>`_
 
+Nim
+````
+
+*   `nimler <https://github.com/wltsmrz/nimler>`_ (MIT)
+
 Javascript
 ``````````
 
