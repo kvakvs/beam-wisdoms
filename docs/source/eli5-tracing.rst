@@ -12,7 +12,7 @@ You can create your own tracer with its own state and feed events to it.
 Tracing is able to produce overwhelming amount of irrelevant data.
 To limit this data a trace filter is applied with ``dbg:tp/4`` (and similar).
 
-When everything is prepared: a tracer and a filter, it is time to open the2
+When everything is prepared: a tracer and a filter, it is time to open the
 valve. A call to ``dbg:p/2`` (and similar) sets the trace target (a process,
 a port, spawn and exit events, everything, and so on).
 It will start sending everything that matches trace target and the filter
