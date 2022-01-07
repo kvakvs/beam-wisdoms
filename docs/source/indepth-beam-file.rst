@@ -170,10 +170,11 @@ Until the ``num_filenames`` do (fill the file names table):
 "StrT" - Strings Table
 ``````````````````````
 
-What I've been able to see from the compiler source, is that this is a huge
-binary with all concatenated strings from the Erlang parsed AST (syntax tree).
-Everything ``{string, X}`` goes here. There are no size markers or separators
-between strings, so this part is confusing and requires more code reading.
+This is a huge binary with all concatenated strings from the Erlang parsed AST 
+(syntax tree).  Everything ``{string, X}`` goes here. There are no size markers 
+or separators between strings, so opcodes that need these values (e.g. bs_put_string)
+must provide an index and a string length to extract what they need out of this
+chunk.
 
 Consider ``compiler`` application in standard library, files:
 ``beam_asm``, ``beam_dict`` (record ``#asm{}`` field ``strings``), and
