@@ -87,7 +87,7 @@ scheduler assigned to them in some manner (for simplicity you can say it is
 random). You can configure schedulers using flags ``+S`` and ``+SP``. Schedulers
 can be bound to cores in different ways (``+sbt`` flag).
 
-There are 3 process priorities: low, normal, high and max.
+There are 4 process priorities: low, normal, high and max.
 Process at max always runs first making everything else wait.
 High runs approximately 8 times much often than normal (the number
 is implementation dependent).
