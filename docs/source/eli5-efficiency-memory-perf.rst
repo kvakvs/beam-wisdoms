@@ -71,7 +71,7 @@ Data Types
     Keeping at most one memory-intensive process per available CPU core is
     welcome, let the BEAM VM do the rest for you.
     Also consider doing a major GC on your worker process before running a
-    big calculation (see ``erlang:garbage_colect``).
+    big calculation (see ``erlang:garbage_collect``).
 
 Immediate Values
 ````````````````
