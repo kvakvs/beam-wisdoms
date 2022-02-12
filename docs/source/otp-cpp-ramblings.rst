@@ -121,7 +121,7 @@ resulting machine code**.
 
 For example: wrapping ``Eterm`` into a class will
 not affect its memory and code footprint, but give full control to the developer
-on how the type is convertable, what goes in and how it comes out, how to copy
+on how the type is convertible, what goes in and how it comes out, how to copy
 it, what to do when the type is destroyed, also will allow to group all tool
 macros and functions inside that class.
 [Code is as fast as in C]
