@@ -4,6 +4,10 @@ Interfacing Erlang with the Outer World
 Native Libraries
 ----------------
 
+.. note::
+    This page was created between 2016 and 2018, more changes might have 
+    happened since.
+
 There are plenty of different approaches on integrating NIFs written in other
 languages:
 
@@ -34,8 +38,7 @@ Lua
 Python
 ``````
 
-*   `Pyrlang <https://github.com/esl/Pyrlang>`_ (Erlang node written in Python
-    gevent) (license Apache2)
+*   `Pyrlang <https://github.com/esl/Pyrlang>`_ (Erlang node written in asyncio) (license Apache2)
 *   ErlPort (see below in "Ports")
 *   `erlang_py <https://github.com/okeuday/erlang_py/>`_ (license MIT)
 *   py_interface
