@@ -11,9 +11,8 @@ Github repository for pages https://github.com/kvakvs/beam-wisdoms
 Latest
 ``````
 
-*   2023-06-18  Leave readthedocs and migrate to Github pages.
-*   2019-03-03  Binary match opcodes added to the instruction list.
-*   2018-12-30  Try/catch opcodes added to the instruction list.
+*   2019-03-03  Binary match opcodes added to the instruction list
+*   2018-12-30  Try/catch opcodes added to the instruction list
 
 ELI5 Section (Explain Me Like I'm Five)
 ---------------------------------------

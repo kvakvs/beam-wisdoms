@@ -1,0 +1,523 @@
+<!DOCTYPE html>
+
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <title>BEAM Instruction Codes &#8212; BEAM VM Wisdoms</title>
+    <link rel="stylesheet" type="text/css" href="_static/pygments.css" />
+    <link rel="stylesheet" type="text/css" href="_static/alabaster.css" />
+    <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js"></script>
+    <script src="_static/doctools.js"></script>
+    <script src="_static/sphinx_highlight.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="IO in Erlang" href="indepth-io.html" />
+    <link rel="prev" title="BEAM File Format" href="indepth-beam-file.html" />
+   
+  <link rel="stylesheet" href="_static/custom.css" type="text/css" />
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+
+  </head><body>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          
+
+          <div class="body" role="main">
+            
+<section id="beam-instruction-codes">
+<h1>BEAM Instruction Codes<a class="headerlink" href="#beam-instruction-codes" title="Permalink to this heading">¶</a></h1>
+<p>BEAM file stores code in <code class="docutils literal notranslate"><span class="pre">Code</span></code> section, using 1 byte for opcode, and encoding
+arguments one after one using <a class="reference internal" href="indepth-beam-file.html#beam-term-format"><span class="std std-ref">compact term encoding</span></a>.
+Opcode table defines arity, or how many arguments each opcode can take.</p>
+<p>The table is not complete, for details on remaining opcodes please refer to
+<a class="reference external" href="http://erlangonxen.org/more/beam">LING VM opcode table</a> or to the source
+<code class="docutils literal notranslate"><span class="pre">beam_emu.c</span></code>. Also see the opcode rules table <code class="docutils literal notranslate"><span class="pre">ops.tab</span></code>, which defines
+special opcodes and rules to to create superinstructions.
+Superinstructions bundle several often used instructions into one and try to
+optimize for specific argument types.</p>
+<p>As of R19 there are 158 base opcodes and several hundreds of superinstructions.</p>
+<section id="opcode-table">
+<h2>Opcode Table<a class="headerlink" href="#opcode-table" title="Permalink to this heading">¶</a></h2>
+<p>Search for “#N” to find opcode N.</p>
+<p><strong>Slots</strong> are special values marking stack cell or a register. They can be
+used to point at the data source or move destination. There are several
+values of secondary tag which denote them.</p>
+<section id="func-info">
+<h3>#2 func_info<a class="headerlink" href="#func-info" title="Permalink to this heading">¶</a></h3>
+<p><code class="docutils literal notranslate"><span class="pre">Func_info</span></code> is located at the beginning of every function, but execution
+always begins at the next label.
+If all function clauses have failed guard checks, VM will jump to this
+instruction.
+It raises <code class="docutils literal notranslate"><span class="pre">function_clause</span></code> error with appropriate line number.</p>
+</section>
+<section id="call">
+<h3>#4 call<a class="headerlink" href="#call" title="Permalink to this heading">¶</a></h3>
+<p>Spec: <code class="docutils literal notranslate"><span class="pre">call</span> <span class="pre">Arity</span> <span class="pre">Label</span></code></p>
+<p>Saves current IP to CP (return address) and jumps to the <code class="docutils literal notranslate"><span class="pre">Label</span></code>,
+which usually is a function entry point.</p>
+</section>
+<section id="call-last">
+<h3>#5 call_last<a class="headerlink" href="#call-last" title="Permalink to this heading">¶</a></h3>
+<p>Spec: <code class="docutils literal notranslate"><span class="pre">call_last</span> <span class="pre">Arity</span> <span class="pre">Label</span> <span class="pre">Deallocate</span></code></p>
+<p>Deallocates <code class="docutils literal notranslate"><span class="pre">Deallocate</span></code> words on stack and does a tail recursive call (jump)
+to the function at <code class="docutils literal notranslate"><span class="pre">Label</span></code>.
+Does not update the CP register with a return
+address, making return bypass current code location.</p>
+</section>
+<section id="call-only">
+<h3>#6 call_only<a class="headerlink" href="#call-only" title="Permalink to this heading">¶</a></h3>
+<p>Spec: <code class="docutils literal notranslate"><span class="pre">call_only</span> <span class="pre">Arity</span> <span class="pre">Label</span></code></p>
+<p>Performs tail recursive call of a function at <code class="docutils literal notranslate"><span class="pre">Label</span></code>.
+Does not update the CP register with a return
+address, making return bypass current code location.</p>
+</section>
+<section id="call-ext">
+<h3>#7 call_ext<a class="headerlink" href="#call-ext" title="Permalink to this heading">¶</a></h3>
+<p>Spec: <code class="docutils literal notranslate"><span class="pre">call_ext</span> <span class="pre">Arity</span> <span class="pre">Destination::mfarity()</span></code></p>
+<p>Performs call to an external <code class="docutils literal notranslate"><span class="pre">Destination</span></code> mfarity (a tuple <code class="docutils literal notranslate"><span class="pre">{Mod,</span> <span class="pre">Fun,</span> <span class="pre">Arity}</span></code>)
+which can point to an exported function or a BIF.
+Return address is saved in CP.</p>
+</section>
+<section id="call-ext-last">
+<h3>#8 call_ext_last<a class="headerlink" href="#call-ext-last" title="Permalink to this heading">¶</a></h3>
+<p>Spec: <code class="docutils literal notranslate"><span class="pre">call_ext_last</span> <span class="pre">Arity</span> <span class="pre">Destination::mfarity()</span> <span class="pre">Deallocate</span></code></p>
+<p>Deallocates <code class="docutils literal notranslate"><span class="pre">Deallocate</span></code> words from stack and performs a tail recursive
+call to an external <code class="docutils literal notranslate"><span class="pre">Destination</span></code> mfarity (a tuple <code class="docutils literal notranslate"><span class="pre">{Mod,</span> <span class="pre">Fun,</span> <span class="pre">Arity}</span></code>)
+which can point to an exported function or a BIF.
+Does not update the CP register with a return
+address, making return bypass current code location.</p>
+</section>
+<section id="bif0">
+<h3>#9 bif0<a class="headerlink" href="#bif0" title="Permalink to this heading">¶</a></h3>
+<p>Spec: <code class="docutils literal notranslate"><span class="pre">bif0</span> <span class="pre">ImportIndex</span> <span class="pre">Dst::mfarity()</span></code> (note no fail label)</p>
+<p>Looks up BIF with zero arguments by <code class="docutils literal notranslate"><span class="pre">Dst</span></code> mfarity (a tuple <code class="docutils literal notranslate"><span class="pre">{Mod,</span> <span class="pre">Fun,</span> <span class="pre">Arity}</span></code>) and calls it.
+Cannot silently fail by jumping to a label and will always throw an exception.</p>
+</section>
+<section id="bif1-11-bif2-152-bif3">
+<h3>#10 bif1 #11 bif2 #152 bif3<a class="headerlink" href="#bif1-11-bif2-152-bif3" title="Permalink to this heading">¶</a></h3>
+<p>Spec: <code class="docutils literal notranslate"><span class="pre">bif1</span> <span class="pre">Fail::label()</span> <span class="pre">ImportIndex</span> <span class="pre">Arg1</span> <span class="pre">Dst::mfarity()</span></code></p>
+<p>Spec: <code class="docutils literal notranslate"><span class="pre">bif2</span> <span class="pre">Fail::label()</span> <span class="pre">ImportIndex</span> <span class="pre">Arg1</span> <span class="pre">Arg2</span> <span class="pre">Dst::mfarity()</span></code></p>
+<p>Spec: <code class="docutils literal notranslate"><span class="pre">bif3</span> <span class="pre">Fail::label()</span> <span class="pre">ImportIndex</span> <span class="pre">Arg1</span> <span class="pre">Arg2</span> <span class="pre">Arg3</span> <span class="pre">Dst::mfarity()</span></code></p>
+<p>Looks up BIF with 1, 2 or 3 arguments by <code class="docutils literal notranslate"><span class="pre">Dst</span></code> mfarity (a tuple <code class="docutils literal notranslate"><span class="pre">{Mod,</span> <span class="pre">Fun,</span> <span class="pre">Arity}</span></code>)
+and calls it.
+If <code class="docutils literal notranslate"><span class="pre">Fail</span></code> label is valid (not 0?), VM will jump to the label on error,
+otherwise will throw an exception.</p>
+</section>
+<section id="allocate-14-allocate-zero">
+<h3>#12 allocate #14 allocate_zero<a class="headerlink" href="#allocate-14-allocate-zero" title="Permalink to this heading">¶</a></h3>
+<p>Spec: <code class="docutils literal notranslate"><span class="pre">allocate</span> <span class="pre">StackNeed</span> <span class="pre">Live</span></code></p>
+<p>Spec: <code class="docutils literal notranslate"><span class="pre">allocate_zero</span> <span class="pre">StackNeed</span> <span class="pre">Live</span></code></p>
+<p>Allocates <code class="docutils literal notranslate"><span class="pre">StackNeed</span></code> words on the stack (a stack frame).
+<code class="docutils literal notranslate"><span class="pre">Live</span></code> defines how many X registers are currently in use (for GC call).
+Current CP value is saved on top of the stack.
+<code class="docutils literal notranslate"><span class="pre">Allocate_zero</span></code> writes NIL to all new stack cells, while <code class="docutils literal notranslate"><span class="pre">allocate</span></code> may
+or may not do this.</p>
+</section>
+<section id="allocate-heap-15-allocate-heap-zero">
+<h3>#13 allocate_heap #15 allocate_heap_zero<a class="headerlink" href="#allocate-heap-15-allocate-heap-zero" title="Permalink to this heading">¶</a></h3>
+<p>Spec: <code class="docutils literal notranslate"><span class="pre">allocate_heap</span> <span class="pre">StackNeed</span> <span class="pre">HeapNeed</span> <span class="pre">Live</span></code></p>
+<p>Spec: <code class="docutils literal notranslate"><span class="pre">allocate_heap_zero</span> <span class="pre">StackNeed</span> <span class="pre">HeapNeed</span> <span class="pre">Live</span></code></p>
+<p>Allocates <code class="docutils literal notranslate"><span class="pre">StackNeed</span></code> words on the stack and ensures that there are
+<code class="docutils literal notranslate"><span class="pre">HeapNeed</span></code> available words on the heap.
+<code class="docutils literal notranslate"><span class="pre">Live</span></code> defines how many X registers are currently in use (for GC call).
+Current CP value is saved on top of the stack.
+<code class="docutils literal notranslate"><span class="pre">Allocate_heap_zero</span></code> writes NIL to all new stack (possibly heap too?) cells,
+while <code class="docutils literal notranslate"><span class="pre">allocate_heap</span></code> may or may not do this.</p>
+</section>
+<section id="test-heap">
+<h3>#16 test_heap<a class="headerlink" href="#test-heap" title="Permalink to this heading">¶</a></h3>
+<p>Spec: <code class="docutils literal notranslate"><span class="pre">test_heap</span> <span class="pre">Need</span> <span class="pre">Live</span></code></p>
+<p>Ensures there are at least <code class="docutils literal notranslate"><span class="pre">Need</span></code> words on the heap. If needed, GC is
+performed using <code class="docutils literal notranslate"><span class="pre">Live</span></code> values from registers array.</p>
+</section>
+<section id="init">
+<h3>#17 init<a class="headerlink" href="#init" title="Permalink to this heading">¶</a></h3>
+<p>Spec: <code class="docutils literal notranslate"><span class="pre">init</span> <span class="pre">Y</span></code></p>
+<p>Clears <code class="docutils literal notranslate"><span class="pre">Y+1</span></code>-th stack word by writing <code class="docutils literal notranslate"><span class="pre">NIL</span></code>. Offset by one is there because
+CP is also stored on stack but it is not considered an <code class="docutils literal notranslate"><span class="pre">Y</span></code> cell.</p>
+</section>
+<section id="deallocate">
+<h3>#18 deallocate<a class="headerlink" href="#deallocate" title="Permalink to this heading">¶</a></h3>
+<p>Spec: <code class="docutils literal notranslate"><span class="pre">deallocate</span> <span class="pre">N</span></code></p>
+<p>Restores CP from stack and deallocates <code class="docutils literal notranslate"><span class="pre">N+1</span></code> words from stack (one extra for
+the CP).</p>
+</section>
+<section id="return">
+<h3>#19 return<a class="headerlink" href="#return" title="Permalink to this heading">¶</a></h3>
+<p>Jumps to current value of CP register. Sets CP to 0.</p>
+</section>
+<section id="send">
+<h3>#20 send<a class="headerlink" href="#send" title="Permalink to this heading">¶</a></h3>
+<p>Sends value <code class="docutils literal notranslate"><span class="pre">X[1]</span></code> to the process specified by <code class="docutils literal notranslate"><span class="pre">X[0]</span></code>. <code class="docutils literal notranslate"><span class="pre">X[1]</span></code> becomes
+the result of the operation (is moved to <code class="docutils literal notranslate"><span class="pre">X[0]</span></code>).</p>
+</section>
+<section id="remove-message">
+<h3>#21 remove_message<a class="headerlink" href="#remove-message" title="Permalink to this heading">¶</a></h3>
+<p>Unlinks current message from the message queue. Message is moved to <code class="docutils literal notranslate"><span class="pre">X[0]</span></code>.
+<em>Current</em> means that there is a movable pointer to a message in the linked list.</p>
+</section>
+<section id="loop-rec">
+<h3>#23 loop_rec<a class="headerlink" href="#loop-rec" title="Permalink to this heading">¶</a></h3>
+<p>Spec: <code class="docutils literal notranslate"><span class="pre">loop_rec</span> <span class="pre">Label</span> <span class="pre">Source</span></code></p>
+<p>Picks up next message in the queue and places it into <code class="docutils literal notranslate"><span class="pre">X[0]</span></code>. If there is no
+message, jumps to <code class="docutils literal notranslate"><span class="pre">Label</span></code> which points to a <code class="docutils literal notranslate"><span class="pre">wait</span></code> or <code class="docutils literal notranslate"><span class="pre">wait_timeout</span></code>
+instruction.</p>
+</section>
+<section id="loop-rec-end">
+<h3>#24 loop_rec_end<a class="headerlink" href="#loop-rec-end" title="Permalink to this heading">¶</a></h3>
+<p>Spec: <code class="docutils literal notranslate"><span class="pre">loop_rec_end</span> <span class="pre">Label</span></code></p>
+<p>Advances message pointer to the next message, then jump to <code class="docutils literal notranslate"><span class="pre">Label</span></code> which
+points to a <code class="docutils literal notranslate"><span class="pre">loop_rec</span></code> instruction.</p>
+</section>
+<section id="wait">
+<h3>#25 wait<a class="headerlink" href="#wait" title="Permalink to this heading">¶</a></h3>
+<p>Spec: <code class="docutils literal notranslate"><span class="pre">wait</span> <span class="pre">Label</span></code></p>
+<p>Jumps to the <code class="docutils literal notranslate"><span class="pre">Label</span></code> and immediately suspends the process (wait for event).</p>
+</section>
+<section id="comparisons">
+<h3>Comparisons<a class="headerlink" href="#comparisons" title="Permalink to this heading">¶</a></h3>
+<p>Spec: <code class="docutils literal notranslate"><span class="pre">&lt;opcode&gt;</span> <span class="pre">Label</span> <span class="pre">Arg1</span> <span class="pre">Arg2</span></code></p>
+<p>Performs a comparison and jumps to <code class="docutils literal notranslate"><span class="pre">Label</span></code> if false.</p>
+<ul class="simple">
+<li><p>#39 <code class="docutils literal notranslate"><span class="pre">is_lt</span></code> - is less</p></li>
+<li><p>#40 <code class="docutils literal notranslate"><span class="pre">is_ge</span></code> - is greater or equal</p></li>
+<li><p>#41 <code class="docutils literal notranslate"><span class="pre">is_eq</span></code> - equal <code class="docutils literal notranslate"><span class="pre">==</span></code></p></li>
+<li><p>#42 <code class="docutils literal notranslate"><span class="pre">is_ne</span></code> - not equal <code class="docutils literal notranslate"><span class="pre">/=</span></code></p></li>
+<li><p>#43 <code class="docutils literal notranslate"><span class="pre">is_eq_exact</span></code> - exactly equal <code class="docutils literal notranslate"><span class="pre">=:=</span></code></p></li>
+<li><p>#44 <code class="docutils literal notranslate"><span class="pre">is_ne_exact</span></code> - exactly not equal <code class="docutils literal notranslate"><span class="pre">=/=</span></code></p></li>
+<li><p>#58 <code class="docutils literal notranslate"><span class="pre">test_arity</span></code> - checks if <code class="docutils literal notranslate"><span class="pre">Arg1</span></code> is a tuple of size <code class="docutils literal notranslate"><span class="pre">Arg2</span></code></p></li>
+<li><p>#115 <code class="docutils literal notranslate"><span class="pre">is_function2</span></code> - checks if <code class="docutils literal notranslate"><span class="pre">Arg1</span></code> is a fun of arity <code class="docutils literal notranslate"><span class="pre">Arg2</span></code></p></li>
+</ul>
+</section>
+<section id="guards-as-opcodes">
+<h3>Guards as Opcodes<a class="headerlink" href="#guards-as-opcodes" title="Permalink to this heading">¶</a></h3>
+<p>Spec: <code class="docutils literal notranslate"><span class="pre">&lt;opcode&gt;</span> <span class="pre">Label</span> <span class="pre">Arg</span></code></p>
+<p>Some guards are implemented as opcodes.
+Performs a check and jumps to <code class="docutils literal notranslate"><span class="pre">Label</span></code> if false.</p>
+<ul class="simple">
+<li><p>#45 <code class="docutils literal notranslate"><span class="pre">is_integer</span></code> - is small or bignum</p></li>
+<li><p>#46 <code class="docutils literal notranslate"><span class="pre">is_float</span></code></p></li>
+<li><p>#47 <code class="docutils literal notranslate"><span class="pre">is_number</span></code> - is small or bignum or float</p></li>
+<li><p>#48 <code class="docutils literal notranslate"><span class="pre">is_atom</span></code></p></li>
+<li><p>#49 <code class="docutils literal notranslate"><span class="pre">is_pid</span></code></p></li>
+<li><p>#50 <code class="docutils literal notranslate"><span class="pre">is_reference</span></code></p></li>
+<li><p>#51 <code class="docutils literal notranslate"><span class="pre">is_port</span></code></p></li>
+<li><p>#52 <code class="docutils literal notranslate"><span class="pre">is_nil</span></code></p></li>
+<li><p>#53 <code class="docutils literal notranslate"><span class="pre">is_binary</span></code></p></li>
+<li><p>#54 <code class="docutils literal notranslate"><span class="pre">is_constant</span></code> - possibly checks if term belongs to literal area of a module?</p></li>
+<li><p>#55 <code class="docutils literal notranslate"><span class="pre">is_list</span></code> - term is a NIL or points to a cons cell</p></li>
+<li><p>#56 <code class="docutils literal notranslate"><span class="pre">is_nonempty_list</span></code> - term points to a cons cell</p></li>
+<li><p>#57 <code class="docutils literal notranslate"><span class="pre">is_tuple</span></code></p></li>
+<li><p>#77 <code class="docutils literal notranslate"><span class="pre">is_function</span></code></p></li>
+<li><p>#114 <code class="docutils literal notranslate"><span class="pre">is_boolean</span></code></p></li>
+</ul>
+</section>
+<section id="select-val">
+<h3>#59 select_val<a class="headerlink" href="#select-val" title="Permalink to this heading">¶</a></h3>
+<p>Spec: <code class="docutils literal notranslate"><span class="pre">select_val</span> <span class="pre">Arg</span> <span class="pre">FailLabel</span> <span class="pre">Destinations</span></code></p>
+<p>Scans <code class="docutils literal notranslate"><span class="pre">Destinations</span></code> even elements (0, 2, 4…) and compares with <code class="docutils literal notranslate"><span class="pre">Arg</span></code>.
+If match is found, jumps to the label in the next odd element (1, 3, 5…)
+otherwise jumpts to <code class="docutils literal notranslate"><span class="pre">FailLabel</span></code>.
+By “match” naive compare is meant.</p>
+</section>
+<section id="select-tuple-arity">
+<h3>#60 select_tuple_arity<a class="headerlink" href="#select-tuple-arity" title="Permalink to this heading">¶</a></h3>
+<p>Spec: <code class="docutils literal notranslate"><span class="pre">select_tuple_arity</span> <span class="pre">Tuple</span> <span class="pre">FailLabel</span> <span class="pre">Destinations</span></code></p>
+<p>Check the arity of the <code class="docutils literal notranslate"><span class="pre">Tuple</span></code> and jump to the corresponding <code class="docutils literal notranslate"><span class="pre">Destination</span></code>
+label, if no arity matches, jump to <code class="docutils literal notranslate"><span class="pre">FailLabel</span></code>.</p>
+</section>
+<section id="jump">
+<h3>#61 jump<a class="headerlink" href="#jump" title="Permalink to this heading">¶</a></h3>
+<p>Spec: <code class="docutils literal notranslate"><span class="pre">jump</span> <span class="pre">Address</span></code></p>
+</section>
+<section id="catch">
+<h3>#62 catch<a class="headerlink" href="#catch" title="Permalink to this heading">¶</a></h3>
+<p>Spec: <code class="docutils literal notranslate"><span class="pre">catch</span> <span class="pre">Y</span> <span class="pre">Label</span></code></p>
+<p>Saves a resumption address &amp;CatchEnd in the local frame at position
+<code class="docutils literal notranslate"><span class="pre">Y</span></code>. Increments the process catch counter. The instruction is followed by a
+<code class="docutils literal notranslate"><span class="pre">catch_end</span></code> instruction. By followed we mean that the <code class="docutils literal notranslate"><span class="pre">catch_end</span></code>
+instruction is put after corresponding Erlang expression that is protected
+from errors by the catch.</p>
+</section>
+<section id="catch-end">
+<h3>#63 catch_end<a class="headerlink" href="#catch-end" title="Permalink to this heading">¶</a></h3>
+<p>Spec: <code class="docutils literal notranslate"><span class="pre">catch_end</span> <span class="pre">Y</span></code></p>
+<p>Clears a resumption address stored in the local frame at position <code class="docutils literal notranslate"><span class="pre">Y</span></code>.
+Decrements the process catch counter.
+This instruction is preceded by a matching <code class="docutils literal notranslate"><span class="pre">catch</span></code> instruction.</p>
+</section>
+<section id="move">
+<h3>#64 move<a class="headerlink" href="#move" title="Permalink to this heading">¶</a></h3>
+<p>Spec: <code class="docutils literal notranslate"><span class="pre">move</span> <span class="pre">Src</span> <span class="pre">Dst</span></code></p>
+<p>Moves value from the <code class="docutils literal notranslate"><span class="pre">Src</span></code> to the <code class="docutils literal notranslate"><span class="pre">Dst</span></code>.</p>
+<p><code class="docutils literal notranslate"><span class="pre">Src</span></code> can be a value or a slot.
+<code class="docutils literal notranslate"><span class="pre">Dst</span></code> must be a slot.</p>
+</section>
+<section id="get-list">
+<h3>#65 get_list<a class="headerlink" href="#get-list" title="Permalink to this heading">¶</a></h3>
+<p>Spec: <code class="docutils literal notranslate"><span class="pre">get_list</span> <span class="pre">Source</span> <span class="pre">Head</span> <span class="pre">Tail</span></code></p>
+<p>Gets the head and tail of a list (splits its cons cell) from <code class="docutils literal notranslate"><span class="pre">Source</span></code>
+and puts values into the registers <code class="docutils literal notranslate"><span class="pre">Head</span></code> and <code class="docutils literal notranslate"><span class="pre">Tail</span></code>.</p>
+</section>
+<section id="get-tuple-element">
+<h3>#66 get_tuple_element<a class="headerlink" href="#get-tuple-element" title="Permalink to this heading">¶</a></h3>
+<p>Spec <code class="docutils literal notranslate"><span class="pre">get_tuple_element</span> <span class="pre">Source</span> <span class="pre">Element</span> <span class="pre">Destination::slot()</span></code></p>
+<p>Gets <code class="docutils literal notranslate"><span class="pre">Element</span></code>-th item from the tuple denoted by <code class="docutils literal notranslate"><span class="pre">Source</span></code> and puts
+it into the <code class="docutils literal notranslate"><span class="pre">Destination</span></code> slot.</p>
+</section>
+<section id="put-list">
+<h3>#69 put_list<a class="headerlink" href="#put-list" title="Permalink to this heading">¶</a></h3>
+<p>Spec: <code class="docutils literal notranslate"><span class="pre">put_list</span> <span class="pre">H</span> <span class="pre">T</span> <span class="pre">Dst::slot()</span></code></p>
+<p>Creates a cons cell with <code class="docutils literal notranslate"><span class="pre">[H|T]</span></code> and places the value into <code class="docutils literal notranslate"><span class="pre">Dst</span></code>.</p>
+</section>
+<section id="put-tuple-71-put">
+<h3>#70 put_tuple #71 put<a class="headerlink" href="#put-tuple-71-put" title="Permalink to this heading">¶</a></h3>
+<p>Spec <code class="docutils literal notranslate"><span class="pre">put_tuple</span> <span class="pre">Arity</span> <span class="pre">Dst</span></code></p>
+<p>This opcode is followed by <code class="docutils literal notranslate"><span class="pre">Arity</span></code> repeated <code class="docutils literal notranslate"><span class="pre">put</span> <span class="pre">Value</span></code> opcodes.
+Creates an empty tuple of <code class="docutils literal notranslate"><span class="pre">Arity</span></code> and places pointer to it into <code class="docutils literal notranslate"><span class="pre">Dst</span></code>.
+Then moves instruction pointer forward, while next opcode is <code class="docutils literal notranslate"><span class="pre">put</span></code>,
+reads argument for every <code class="docutils literal notranslate"><span class="pre">put</span></code> and places it into the next tuple element.
+Stops after <code class="docutils literal notranslate"><span class="pre">Arity</span></code> steps.</p>
+</section>
+<section id="badmatch">
+<h3>#72 badmatch<a class="headerlink" href="#badmatch" title="Permalink to this heading">¶</a></h3>
+<p>Produces an error.</p>
+</section>
+<section id="if-clause">
+<h3>#73 if_clause<a class="headerlink" href="#if-clause" title="Permalink to this heading">¶</a></h3>
+<p>Produces an error.</p>
+</section>
+<section id="case-clause">
+<h3>#74 case_clause<a class="headerlink" href="#case-clause" title="Permalink to this heading">¶</a></h3>
+<p>Produces an error.</p>
+</section>
+<section id="call-fun">
+<h3>#75 call_fun<a class="headerlink" href="#call-fun" title="Permalink to this heading">¶</a></h3>
+<p>Spec: <code class="docutils literal notranslate"><span class="pre">call_fun</span> <span class="pre">Arity</span></code></p>
+<p>Calls a fun or export.
+Arguments are in <code class="docutils literal notranslate"><span class="pre">X[0..Arity-1]</span></code>.
+Function object is in <code class="docutils literal notranslate"><span class="pre">X[Arity]</span></code>.
+Return address is saved in CP.</p>
+<p>Raises <code class="docutils literal notranslate"><span class="pre">badarity</span></code> if arity does not match the function object.
+Raises <code class="docutils literal notranslate"><span class="pre">badfun</span></code> if object is not callable (not a fun or export).</p>
+</section>
+<section id="make-fun">
+<h3>#76 make_fun<a class="headerlink" href="#make-fun" title="Permalink to this heading">¶</a></h3>
+<p>Seems to be deprecated, so compiler always generates <code class="docutils literal notranslate"><span class="pre">make_fun2</span></code>.</p>
+</section>
+<section id="call-ext-only">
+<h3>#78 call_ext_only<a class="headerlink" href="#call-ext-only" title="Permalink to this heading">¶</a></h3>
+<p>Spec: <code class="docutils literal notranslate"><span class="pre">call_ext_only</span> <span class="pre">Arity</span> <span class="pre">Destination::mfarity()</span></code></p>
+<p>Performs a tail recursive call to a <code class="docutils literal notranslate"><span class="pre">Destination</span></code> mfarity (a tuple <code class="docutils literal notranslate"><span class="pre">{Mod,</span> <span class="pre">Fun,</span> <span class="pre">Arity}</span></code>)
+which can point to an exported function or a BIF.
+Does not update the CP register with a return
+address, making return bypass current code location.</p>
+</section>
+<section id="bs-put-integer-5">
+<h3>#89 bs_put_integer/5<a class="headerlink" href="#bs-put-integer-5" title="Permalink to this heading">¶</a></h3>
+<p>Spec: <code class="docutils literal notranslate"><span class="pre">bs_put_integer</span> <span class="pre">Fail=j</span> <span class="pre">Sz=sq</span> <span class="pre">Unit=u</span> <span class="pre">Flags=u</span> <span class="pre">Src=s</span></code></p>
+<p>An integer from <code class="docutils literal notranslate"><span class="pre">src</span></code> and having bitsize <code class="docutils literal notranslate"><span class="pre">sz</span></code> is appended to the current
+writable binary (stored in the internal state) at the current bit offset
+(stored in the state too).</p>
+</section>
+<section id="make-fun2">
+<h3>#103 make_fun2<a class="headerlink" href="#make-fun2" title="Permalink to this heading">¶</a></h3>
+<p>Spec: <code class="docutils literal notranslate"><span class="pre">make_fun2</span> <span class="pre">Lambda</span></code></p>
+<p>Produces a callable fun object. <code class="docutils literal notranslate"><span class="pre">Lambda</span></code> should be resolved at load time
+to a function entry. Creates a callable box object on the heap which points
+to this fun object and also has space to store frozen values (Free variables).</p>
+</section>
+<section id="try-2">
+<h3>#104 try/2<a class="headerlink" href="#try-2" title="Permalink to this heading">¶</a></h3>
+<p>Spec <code class="docutils literal notranslate"><span class="pre">try</span> <span class="pre">Yregister</span> <span class="pre">Label</span></code></p>
+<p>Begins a guarded code section by writing a special crafted catch value into the
+given Y register. The catch value points to the label in case of exception, where
+a <code class="docutils literal notranslate"><span class="pre">try_case</span></code> instruction is located.</p>
+</section>
+<section id="try-end-1">
+<h3>#105 try_end/1<a class="headerlink" href="#try-end-1" title="Permalink to this heading">¶</a></h3>
+<p>Spec: <code class="docutils literal notranslate"><span class="pre">try_end</span> <span class="pre">Yregister</span></code></p>
+<p>Ends the guarded section by clearing the catch value on stack with a NIL.</p>
+</section>
+<section id="try-case-1">
+<h3>#106 try_case/1<a class="headerlink" href="#try-case-1" title="Permalink to this heading">¶</a></h3>
+<p>Begins investigation of an exception, also clears the catch value on stack. From
+here if you need the exception to propagate, you have to raise it again.</p>
+</section>
+<section id="try-case-end-1">
+<h3>#107 try_case_end/1<a class="headerlink" href="#try-case-end-1" title="Permalink to this heading">¶</a></h3>
+</section>
+<section id="raise-2">
+<h3>#108 raise/2<a class="headerlink" href="#raise-2" title="Permalink to this heading">¶</a></h3>
+<p>Spec: <code class="docutils literal notranslate"><span class="pre">raise</span> <span class="pre">Stacktrace</span> <span class="pre">ExcValue</span></code></p>
+<p>A legacy instruction which takes error type from the provided stacktrace
+object and creates an exception with the exception value (second argument).</p>
+</section>
+<section id="bs-init2-6">
+<h3>#109 bs_init2/6<a class="headerlink" href="#bs-init2-6" title="Permalink to this heading">¶</a></h3>
+<p>Creates a new writable binary of requested size with some extra words, runs GC
+if needed, then the binary is stored in the internal state. Following <code class="docutils literal notranslate"><span class="pre">bs_put*</span></code>
+instructions will add to it. The write bit offset in the internal state is
+also reset to 0.</p>
+</section>
+<section id="apply-113-apply-last">
+<h3>#112 apply #113 apply_last<a class="headerlink" href="#apply-113-apply-last" title="Permalink to this heading">¶</a></h3>
+<p>Spec <code class="docutils literal notranslate"><span class="pre">apply</span> <span class="pre">Arity</span></code></p>
+<p>Spec <code class="docutils literal notranslate"><span class="pre">apply_last</span> <span class="pre">Arity</span> <span class="pre">Dealloc</span></code></p>
+<p>Calls function at <code class="docutils literal notranslate"><span class="pre">X[Arity+1]</span></code> in module <code class="docutils literal notranslate"><span class="pre">X[Arity]</span></code>
+with arguments <code class="docutils literal notranslate"><span class="pre">X[0..Arity-1]</span></code>. Module is an atom or a tuple. Function is an
+atom.</p>
+<p><code class="docutils literal notranslate"><span class="pre">Apply</span></code> saves current instruction pointer into CP and performs a
+call to the destination.</p>
+<p><code class="docutils literal notranslate"><span class="pre">Apply_last</span></code> cuts the stack by <code class="docutils literal notranslate"><span class="pre">Dealloc</span></code> words preserving the CP on top
+of the stack, and then jumps to the destination.</p>
+</section>
+<section id="trim">
+<h3>#136 trim<a class="headerlink" href="#trim" title="Permalink to this heading">¶</a></h3>
+<p>Spec: <code class="docutils literal notranslate"><span class="pre">trim</span> <span class="pre">N</span> <span class="pre">_Remaining</span></code></p>
+<p>Drops <code class="docutils literal notranslate"><span class="pre">N</span></code> words on stack after saved CP, moving it <code class="docutils literal notranslate"><span class="pre">N</span></code> words up.</p>
+</section>
+</section>
+<section id="binary-matching-and-operations">
+<h2>Binary Matching and Operations<a class="headerlink" href="#binary-matching-and-operations" title="Permalink to this heading">¶</a></h2>
+<section id="bs-get-binary2-7">
+<h3>#119 bs_get_binary2/7<a class="headerlink" href="#bs-get-binary2-7" title="Permalink to this heading">¶</a></h3>
+<p>Spec: <code class="docutils literal notranslate"><span class="pre">bs_get_binary2</span> <span class="pre">Fail</span> <span class="pre">MatchState</span> <span class="pre">Live</span> <span class="pre">Size</span> <span class="pre">Unit</span> <span class="pre">Dst</span></code></p>
+<p>For current binary match position (started by <code class="docutils literal notranslate"><span class="pre">bs_start_match*</span></code>) extract
+a sub-binary (a slice) and return it. <code class="docutils literal notranslate"><span class="pre">Live</span></code> is used for an occasional garbage
+collection act if the memory is tight. <code class="docutils literal notranslate"><span class="pre">Size:Unit</span></code> determines how many bits
+go into the result.</p>
+</section>
+<section id="bs-start-match3">
+<h3>#166 bs_start_match3<a class="headerlink" href="#bs-start-match3" title="Permalink to this heading">¶</a></h3>
+<p>Spec <code class="docutils literal notranslate"><span class="pre">bs_start_match3</span> <span class="pre">Fail</span> <span class="pre">Context</span> <span class="pre">Live</span> <span class="pre">Dst</span></code></p>
+<p>This opcode was introduced in OTP 22 and replaces <code class="docutils literal notranslate"><span class="pre">bs_start_match2</span></code>.</p>
+<p>Depending on whether the value in the <code class="docutils literal notranslate"><span class="pre">Context</span></code> is binary, or an existing match
+state, creates a new match state if needed. The position from the match state is used
+for binary matching step by step by the following <code class="docutils literal notranslate"><span class="pre">bs_*</span></code> opcodes.</p>
+</section>
+<section id="bs-test-tail2">
+<h3>#121 bs_test_tail2<a class="headerlink" href="#bs-test-tail2" title="Permalink to this heading">¶</a></h3>
+<p>Spec: <code class="docutils literal notranslate"><span class="pre">bs_test_tail2</span> <span class="pre">Fail,</span> <span class="pre">MatchState,</span> <span class="pre">N</span></code></p>
+<p>Ensures that the match state has <code class="docutils literal notranslate"><span class="pre">N</span></code> bits remaining for processing. If this is
+not true, the VM will jump to the <code class="docutils literal notranslate"><span class="pre">Fail</span></code> label.</p>
+</section>
+</section>
+</section>
+
+
+<script>
+(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+(i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+})(window,document,'script','https://www.google-analytics.com/analytics.js','ga');
+ga('create', 'UA-84125230-1', 'auto');
+ga('send', 'pageview');
+</script>
+
+          </div>
+          
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<div style="margin-bottom:16px;">
+    <a href="http://beam-wisdoms.clau.se/" alt="Wisdoms Home Page"
+    title="Return to the Home Page"><img src="_static/img/bw_logo.png" width="200"></a>
+</div>
+
+
+<h1 class="logo"><a href="index.html">BEAM VM Wisdoms</a></h1>
+
+
+
+
+
+
+
+
+<h3>Navigation</h3>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="eli5-vm.html">BEAM VM ELI5</a></li>
+<li class="toctree-l1"><a class="reference internal" href="eli5-atoms.html">Atoms ELI5</a></li>
+<li class="toctree-l1"><a class="reference internal" href="eli5-processes.html">Processes ELI5</a></li>
+<li class="toctree-l1"><a class="reference internal" href="eli5-process-heap.html">Process Heaps ELI5</a></li>
+<li class="toctree-l1"><a class="reference internal" href="eli5-io.html">Input/Output and Ports ELI5</a></li>
+<li class="toctree-l1"><a class="reference internal" href="eli5-tracing.html">Tracing ELI5</a></li>
+<li class="toctree-l1"><a class="reference internal" href="eli5-bif-nif.html">BIF and NIF functions ELI5</a></li>
+<li class="toctree-l1"><a class="reference internal" href="eli5-types.html">Types ELI5</a></li>
+<li class="toctree-l1"><a class="reference internal" href="eli5-etf.html">External Term Format ELI5</a></li>
+<li class="toctree-l1"><a class="reference internal" href="eli5-property-based.html">Property Based Testing ELI5</a></li>
+<li class="toctree-l1"><a class="reference internal" href="eli5-efficiency.html">Efficiency ELI5</a></li>
+<li class="toctree-l1"><a class="reference internal" href="eli5-efficiency-memory-perf.html">Memory Performance ELI5</a></li>
+</ul>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="definitions.html">BEAM Definitions</a></li>
+<li class="toctree-l1"><a class="reference internal" href="indepth-memory-layout.html">Data Types Memory Layout</a></li>
+<li class="toctree-l1"><a class="reference internal" href="indepth-data-sizes.html">BEAM Internal data sizes</a></li>
+<li class="toctree-l1"><a class="reference internal" href="indepth-heap-layout.html">Process Heap Layout</a></li>
+<li class="toctree-l1"><a class="reference internal" href="interfacing.html">Interfacing Erlang with the Outer World</a></li>
+<li class="toctree-l1"><a class="reference internal" href="indepth-beam-file.html">BEAM File Format</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">BEAM Instruction Codes</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#opcode-table">Opcode Table</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#binary-matching-and-operations">Binary Matching and Operations</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="indepth-io.html">IO in Erlang</a></li>
+</ul>
+
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="index.html">Documentation overview</a><ul>
+      <li>Previous: <a href="indepth-beam-file.html" title="previous chapter">BEAM File Format</a></li>
+      <li>Next: <a href="indepth-io.html" title="next chapter">IO in Erlang</a></li>
+  </ul></li>
+</ul>
+</div>
+<div id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"/>
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</div>
+<script>document.getElementById('searchbox').style.display = "block"</script>
+
+
+
+
+
+
+
+
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &copy;2016-2017, Dmytro "kvakvs" Lytovchenko.
+      
+      |
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 7.0.1</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.13</a>
+      
+      |
+      <a href="_sources/indepth-beam-instructions.rst.txt"
+          rel="nofollow">Page source</a>
+    </div>
+
+    
+
+    
+  </body>
+</html>

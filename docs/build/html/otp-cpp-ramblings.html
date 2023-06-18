@@ -1,0 +1,270 @@
+<!DOCTYPE html>
+
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <title>How OTP Source Would Benefit from C++ &#8212; BEAM VM Wisdoms</title>
+    <link rel="stylesheet" type="text/css" href="_static/pygments.css" />
+    <link rel="stylesheet" type="text/css" href="_static/alabaster.css" />
+    <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js"></script>
+    <script src="_static/doctools.js"></script>
+    <script src="_static/sphinx_highlight.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+   
+  <link rel="stylesheet" href="_static/custom.css" type="text/css" />
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+
+  </head><body>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          
+
+          <div class="body" role="main">
+            
+<section id="how-otp-source-would-benefit-from-c">
+<h1>How OTP Source Would Benefit from C++<a class="headerlink" href="#how-otp-source-would-benefit-from-c" title="Permalink to this heading">¶</a></h1>
+<p>Here are my personal thoughts + results of my experiments with transferring
+OTP C source to C++ and listing benefits of doing so for real.</p>
+<p>Here is a brilliant case study on converting a C library to C++ with benefits
+listed:
+J. Daniel Garcia and B. Stroustrup:
+<a class="reference external" href="http://www.stroustrup.com/improving_garcia_stroustrup_2015.pdf">Improving performance and maintainability through refactoring in C++11</a>.
+Isocpp.org. August 2015. They managed to reduce instruction count, improve
+branch miss ratio, thus improving the performance.</p>
+<p>Another success story: Porting MAME (multiple arcade machine emulator) from C to modern C++ <a class="reference external" href="https://www.youtube.com/watch?v=wAUnUWYaA5s">https://www.youtube.com/watch?v=wAUnUWYaA5s</a>
+The intro to what is MAME and why it is so huge goes till 26min then the conversion story begins.</p>
+<section id="portability-benefits">
+<h2>Portability Benefits<a class="headerlink" href="#portability-benefits" title="Permalink to this heading">¶</a></h2>
+<p>Currently compiling Erlang/OTP on Windows is pain. It is built using MSVC for
+the C89 part, except that <code class="docutils literal notranslate"><span class="pre">beam_emu.c</span></code> is built using GCC.
+This is happening because “jump to label address” extension is not supported on
+MSVC which falls back to switch dispatch and creates much slower code.</p>
+<p>Microsoft stated, that they will not be investing any time into supporting
+modern C standards with MSVC.
+So there are only two ways out: use another compiler on Windows (gcc or Clang)
+or switch to C++ and use MSVC natively.</p>
+</section>
+<section id="code-benefits">
+<h2>Code Benefits<a class="headerlink" href="#code-benefits" title="Permalink to this heading">¶</a></h2>
+<section id="compatible-with-c">
+<h3>Compatible with C<a class="headerlink" href="#compatible-with-c" title="Permalink to this heading">¶</a></h3>
+<p>C runs perfectly fine when compiled as C++, the transition can happen gradually.
+Does not have to use certain features like RTTI and exceptions, they can be
+disabled at compiler-level.</p>
+</section>
+<section id="compile-time-everywhere">
+<h3>Compile-Time Everywhere<a class="headerlink" href="#compile-time-everywhere" title="Permalink to this heading">¶</a></h3>
+<p>Macros with code should be replaced with typed inlines or <code class="docutils literal notranslate"><span class="pre">constexpr</span></code>.
+This helps with type checking and debuggability.
+Stepping into a function in a debugger works much better than into a macro.
+Also type safety applies. [Better view in debugger]</p>
+<p>Macros with numbers should be replaced with <code class="docutils literal notranslate"><span class="pre">const</span></code> and <code class="docutils literal notranslate"><span class="pre">constexpr</span></code>.
+This way they will have a type, a namespace, and possibly may change into
+an enum.
+[Type checking = less bugs]</p>
+<p>Abusive prefixing on <code class="docutils literal notranslate"><span class="pre">enum</span></code> should be replaced with <code class="docutils literal notranslate"><span class="pre">enum</span> <span class="pre">class</span></code>
+and namespaces. Moving enums with smaller scope into relevant structs and
+classes (serves as a namespace).
+[Less collisions and confusions in naming]</p>
+</section>
+<section id="type-safety">
+<h3>Type Safety<a class="headerlink" href="#type-safety" title="Permalink to this heading">¶</a></h3>
+<p>C++ is more strict about types, pointer types and alignment. Example: Assigning
+an <code class="docutils literal notranslate"><span class="pre">Eterm*</span></code> to a <code class="docutils literal notranslate"><span class="pre">char*</span></code> will change alignment requirement from 8 to 1,
+possibly hiding a bug. [Prevents accidents]</p>
+<p>Size types can be tagged: word and byte counts can be made incompatible to
+reduce confusion and bugs, with conversion functions.
+[Less word-byte-confusion-related bugs]</p>
+<p>To develop the idea of tagging further, memory pointer types can be tagged
+(making them incompatible with other pointer types to reduce confusion
+when passing them as arguments).
+[Less memory-type related bugs]</p>
+<p>Things like <code class="docutils literal notranslate"><span class="pre">memcpy</span></code> invite errors, you have to be mindful about types and
+sizes. C++ allows to rewrite this in a safe way, they even have <code class="docutils literal notranslate"><span class="pre">std::copy</span></code>
+that does the same in a safe way (often this compiles into a <code class="docutils literal notranslate"><span class="pre">memcpy</span></code>
+but with correct sizes and bounds).
+The C alternative having a function per type with separate names is highly
+impractical. [Safer memory bounds]</p>
+<p>Things like <code class="docutils literal notranslate"><span class="pre">erts_alloc</span></code> invite errors because you have to remember data
+sizes. C++ can make sizes deducted automatically and return a correct
+pointer type. [Safer memory allocations]
+[Safer deallocations if they check types too]</p>
+</section>
+<section id="divide-and-rule">
+<h3>Divide and Rule<a class="headerlink" href="#divide-and-rule" title="Permalink to this heading">¶</a></h3>
+<p>Abusive prefixing on types and function names should go into namespaces.
+Structs and classes also serve as namespaces (unlike in C).</p>
+<p>Benefits are immense: names become shorter at the cost of specifying namespace
+at the beginning of module or a scope (<code class="docutils literal notranslate"><span class="pre">using</span> <span class="pre">namespace</span> <span class="pre">X</span></code> or
+<code class="docutils literal notranslate"><span class="pre">namespace</span> <span class="pre">X</span> <span class="pre">=</span> <span class="pre">Y::Z</span></code>).
+[Shorter names easier to read]</p>
+<p>Hiding a lot of small macros with short nondescript names and abstracting
+away things. Example: <code class="docutils literal notranslate"><span class="pre">erl_term.h</span></code> and all the macros in it can be
+generalized, grouped under the name of eterm and type checked.
+In modern C++ all functions in the class header file are implicitly inline.
+[Fast code at no cost]</p>
+</section>
+<section id="generic-code">
+<h3>Generic Code<a class="headerlink" href="#generic-code" title="Permalink to this heading">¶</a></h3>
+<p>Code duplication can be reduced by moving code into templated functions.
+Long functions can and should be broken into smaller, reducing the variable
+scope and amount of code to read.
+Example: Garbage collection sweeps are generic, before R20 they were
+duplicated code.
+[Less mistakes with copies of almost identical code]</p>
+<p>This applies to all the aggressively macroed code, again.
+[Stricter type control, less bugs, code is as fast as before]</p>
+<p>“Zero abstraction cost” is the ground C++ principle.
+Much work can be done at the compile-time, based on type checking, inlining
+and optimization. <strong>Amount of abstractions used should have little impact on
+resulting machine code</strong>.
+[Code is fast as in C]</p>
+<p>For example: wrapping <code class="docutils literal notranslate"><span class="pre">Eterm</span></code> into a class will
+not affect its memory and code footprint, but give full control to the developer
+on how the type is convertable, what goes in and how it comes out, how to copy
+it, what to do when the type is destroyed, also will allow to group all tool
+macros and functions inside that class.
+[Code is as fast as in C]</p>
+<p>Many loops can be remade generic using higher order functions.
+C++ compiler often is smart enough to inline them without degrading machine
+code quality.
+[Code is as fast as in C] [Less bugs when using generic algorithms]</p>
+</section>
+<section id="performance-and-safety">
+<h3>Performance and Safety<a class="headerlink" href="#performance-and-safety" title="Permalink to this heading">¶</a></h3>
+<p>Smart pointers and RAII should be used for temporary memory (resource)
+allocations reducing manual resource management. Let compiler remember, when
+you have to reduce that refcount or free that temporary buffer.
+[Automatic resource management at little to no cost]</p>
+<p>With const-correctness we gain better control on what can be changed where.
+Current OTP source is not const-correct and safety is enforced through
+convoluted locking and thorough thinking + debugging.
+Const-correct code is transparent on what memory it touches, and is
+easier to parallellize. Pure const-correct code is even better.
+[Harder to create bad code]</p>
+</section>
+</section>
+<section id="how-hard-is-to-migrate">
+<h2>How Hard Is To Migrate<a class="headerlink" href="#how-hard-is-to-migrate" title="Permalink to this heading">¶</a></h2>
+<p>I’ve done several attempts with varying degree of success.
+One must fix all C++ keywords used as variable and argument names (easy).</p>
+<p>Because C++ is stricter to pointers and type casts, one must revisit all places,
+where <code class="docutils literal notranslate"><span class="pre">erts_alloc/realloc</span></code> are happening and fix the type casts there.</p>
+<p>Generated tables also use pointer conversion and the generation scripts must be
+mended (several lines changes in few places).</p>
+<p>Note: <a class="reference external" href="https://www.youtube.com/watch?v=w5Z4JlMJ1VQ">https://www.youtube.com/watch?v=w5Z4JlMJ1VQ</a>
+CppCon 2016: Tim Haines “Improving Performance Through Compiler Switches…”</p>
+</section>
+</section>
+
+
+<script>
+(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+(i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+})(window,document,'script','https://www.google-analytics.com/analytics.js','ga');
+ga('create', 'UA-84125230-1', 'auto');
+ga('send', 'pageview');
+</script>
+
+          </div>
+          
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<div style="margin-bottom:16px;">
+    <a href="http://beam-wisdoms.clau.se/" alt="Wisdoms Home Page"
+    title="Return to the Home Page"><img src="_static/img/bw_logo.png" width="200"></a>
+</div>
+
+
+<h1 class="logo"><a href="index.html">BEAM VM Wisdoms</a></h1>
+
+
+
+
+
+
+
+
+<h3>Navigation</h3>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="eli5-vm.html">BEAM VM ELI5</a></li>
+<li class="toctree-l1"><a class="reference internal" href="eli5-atoms.html">Atoms ELI5</a></li>
+<li class="toctree-l1"><a class="reference internal" href="eli5-processes.html">Processes ELI5</a></li>
+<li class="toctree-l1"><a class="reference internal" href="eli5-process-heap.html">Process Heaps ELI5</a></li>
+<li class="toctree-l1"><a class="reference internal" href="eli5-io.html">Input/Output and Ports ELI5</a></li>
+<li class="toctree-l1"><a class="reference internal" href="eli5-tracing.html">Tracing ELI5</a></li>
+<li class="toctree-l1"><a class="reference internal" href="eli5-bif-nif.html">BIF and NIF functions ELI5</a></li>
+<li class="toctree-l1"><a class="reference internal" href="eli5-types.html">Types ELI5</a></li>
+<li class="toctree-l1"><a class="reference internal" href="eli5-etf.html">External Term Format ELI5</a></li>
+<li class="toctree-l1"><a class="reference internal" href="eli5-property-based.html">Property Based Testing ELI5</a></li>
+<li class="toctree-l1"><a class="reference internal" href="eli5-efficiency.html">Efficiency ELI5</a></li>
+<li class="toctree-l1"><a class="reference internal" href="eli5-efficiency-memory-perf.html">Memory Performance ELI5</a></li>
+</ul>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="definitions.html">BEAM Definitions</a></li>
+<li class="toctree-l1"><a class="reference internal" href="indepth-memory-layout.html">Data Types Memory Layout</a></li>
+<li class="toctree-l1"><a class="reference internal" href="indepth-data-sizes.html">BEAM Internal data sizes</a></li>
+<li class="toctree-l1"><a class="reference internal" href="indepth-heap-layout.html">Process Heap Layout</a></li>
+<li class="toctree-l1"><a class="reference internal" href="interfacing.html">Interfacing Erlang with the Outer World</a></li>
+<li class="toctree-l1"><a class="reference internal" href="indepth-beam-file.html">BEAM File Format</a></li>
+<li class="toctree-l1"><a class="reference internal" href="indepth-beam-instructions.html">BEAM Instruction Codes</a></li>
+<li class="toctree-l1"><a class="reference internal" href="indepth-io.html">IO in Erlang</a></li>
+</ul>
+
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="index.html">Documentation overview</a><ul>
+  </ul></li>
+</ul>
+</div>
+<div id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"/>
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</div>
+<script>document.getElementById('searchbox').style.display = "block"</script>
+
+
+
+
+
+
+
+
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &copy;2016-2017, Dmytro "kvakvs" Lytovchenko.
+      
+      |
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 7.0.1</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.13</a>
+      
+      |
+      <a href="_sources/otp-cpp-ramblings.rst.txt"
+          rel="nofollow">Page source</a>
+    </div>
+
+    
+
+    
+  </body>
+</html>
