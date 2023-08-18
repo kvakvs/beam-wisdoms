@@ -27,7 +27,7 @@ Usually atoms are encoded as strings.
 But in the distributed mode (over the network) to further reduce the protocol
 size a distribution header can be added.
 It contains a table of atom names which are included in the encoded message.
-Atoms in the message are placed in this table and their occurences are replaced
+Atoms in the message are placed in this table and their occurrences are replaced
 with indexes.
 
 It is impossible to encode internal VM value types which never appear in
