@@ -11,6 +11,7 @@ Github repository for pages https://github.com/kvakvs/beam-wisdoms
 Latest
 ``````
 
+*   2024-03-26  Migrate to Hetzner Webhosting (certificate problem).
 *   2023-06-18  Leave readthedocs and migrate to Github pages.
 *   2019-03-03  Binary match opcodes added to the instruction list.
 *   2018-12-30  Try/catch opcodes added to the instruction list.
