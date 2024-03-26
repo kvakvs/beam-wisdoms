@@ -24,8 +24,8 @@ Here are general rules regarding data copying and performance.
 Literals (Constants)
 --------------------
 
-All Erlang values in your module (literals) are saved in the module file and
-then loaded when your module loads.
+All Erlang values in your module which are larger than a single machine word are called literals.
+Literals are saved in the module file and then loaded when your module loads.
 These values are stored in special memory area called constant pool and later
 when you reload your code the garbage collector will move old constants to your
 process heap (see note below, this has changed in OTP 20.0).
@@ -36,7 +36,7 @@ store large binaries in code etc.
 
 .. note::
 
-    In Erlang versions prior to 20.0 a constant value will be copied when
+    In Erlang versions prior to 20.0 a constant value would be copied when
     crossing process boundary (explained above in "Data Copying"). This has changed
     in version 20.0
     (OTP-13529 in `Release Notes <http://erlang.org/download/otp_src_20.0.readme>`_ )

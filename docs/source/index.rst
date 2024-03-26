@@ -8,6 +8,8 @@ knowledge such as VM internals, memory layout, opcodes etc.
 The project is work in progress, so come back soon!
 Github repository for pages https://github.com/kvakvs/beam-wisdoms
 
+Knowledge cutoff: OTP 20
+
 Latest
 ``````
 

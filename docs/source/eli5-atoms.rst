@@ -19,12 +19,12 @@ atoms operations are cheap.
 
 BEAM loader routine reads atom values and looks them up in atom table. It
 replaces atom names with their integer values, tagged as Atom
-:ref:`immediate <def-immed>`. Henceforth the code manipulates immediate integer
+:ref:`immediate <def-immed>`. Henceforth the code internally manipulates integer
 values instead of names.
 
 These internal values cannot leave the node (over the network or on disk) as
 integers. This is because another node will have different numeric values
-for atoms. Thus when leaving the node atoms are always converted to strings.
+for same named atoms. Thus when leaving the node atoms are always converted to strings.
 This affects BEAM files, external pids, external ports, atoms in Mnesia/DETS
 and so on. This is the reason why sometimes developers prefer short atom names
 for database field names — they will appear as strings in database data.

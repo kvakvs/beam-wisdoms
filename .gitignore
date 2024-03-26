@@ -1,4 +1,4 @@
-/docs/build/*
-/src/*
+/src/
 *.iml
-.idea/*
+/.idea/
+/docs/build/
