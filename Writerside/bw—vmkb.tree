@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE instance-profile
+        SYSTEM "https://resources.jetbrains.com/writerside/1.0/product-profile.dtd">
+
+<instance-profile id="bw—vmkb"
+                 name="BEAM Wisdoms — Virtual Machine Knowledge Base"
+                 start-page="Start.md">
+
+    <toc-element topic="Start.md"/>
+    <toc-element topic="ELI5-Explain-Like-I-m-Five.md">
+        <toc-element topic="ELI5-BEAM-VM.md"/>
+        <toc-element topic="ELI5-Atoms.md"/>
+        <toc-element topic="ELI5-Processes.md"/>
+        <toc-element topic="ELI5-Process-Heaps.md"/>
+        <toc-element topic="ELI5-Input-Output-and-Ports.md"/>
+        <toc-element topic="ELI5-Tracing.md"/>
+        <toc-element topic="ELI5-BIF-and-NIF-functions.md"/>
+        <toc-element topic="ELI5-Types.md"/>
+        <toc-element topic="ELI5-External-Term-Format.md"/>
+        <toc-element topic="ELI5-Property-Based-Testing.md"/>
+        <toc-element topic="ELI5-Efficiency.md"/>
+        <toc-element topic="ELI5-Memory-Performance.md"/>
+    </toc-element>
+    <toc-element topic="Deeper-Knowledge.md">
+        <toc-element topic="BEAM-Definitions.md"/>
+        <toc-element topic="BEAM-Internal-data-sizes.md"/>
+        <toc-element topic="BEAM-File-Format.md"/>
+        <toc-element topic="BEAM-Instruction-Codes.md"/>
+        <toc-element topic="Process-Heap-Layout.md"/>
+        <toc-element topic="Data-Types-Memory-Layout.md"/>
+        <toc-element topic="IO-in-Erlang-and-BEAM.md"/>
+        <toc-element topic="Interfacing-with-the-Outer-World.md"/>
+    </toc-element>
+</instance-profile>
