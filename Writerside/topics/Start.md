@@ -31,5 +31,5 @@ More details from ELI5 articles; IO and ports; Links and monitors; ETS?; BIFs, t
 
 ## Other Smaller Things and Ramblings
 
-Erlang/OTP Source Style Guide
-How OTP Source Would Benefit from C++
+* Erlang/OTP Source Style Guide (notes to self only)
+* [](OTP-Source-to-CPP.md)

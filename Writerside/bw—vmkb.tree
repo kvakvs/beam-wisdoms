@@ -6,7 +6,9 @@
                  name="BEAM Wisdoms — Virtual Machine Knowledge Base"
                  start-page="Start.md">
 
-    <toc-element topic="Start.md"/>
+    <toc-element topic="Start.md">
+        <toc-element topic="OTP-Source-to-CPP.md"/>
+    </toc-element>
     <toc-element topic="ELI5-Explain-Like-I-m-Five.md">
         <toc-element topic="ELI5-BEAM-VM.md"/>
         <toc-element topic="ELI5-Atoms.md"/>
