@@ -1,4 +1,4 @@
-# Welcome, Adventurer!
+# Welcome to BEAM Wisdoms
 
 [//]: # (<img alt="BEAM Wisdoms" style="block" width="350" src="bw_logo.png" />)
 
@@ -31,5 +31,4 @@ More details from ELI5 articles; IO and ports; Links and monitors; ETS?; BIFs, t
 
 ## Other Smaller Things and Ramblings
 
-* Erlang/OTP Source Style Guide (notes to self only)
-* [](OTP-Source-to-CPP.md)
+See [](Other.md)
